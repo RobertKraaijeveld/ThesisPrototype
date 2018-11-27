@@ -9,7 +9,6 @@ namespace ThesisPrototype
 {
     public class RedisDatabaseApi
     {
-        private bool _connectionIsClustered;
         private readonly string _connectionString;
         private readonly ConnectionMultiplexer _connectionMultiplexer;
         private IDatabase _databaseConnection;
@@ -23,19 +22,12 @@ namespace ThesisPrototype
         }
 
 
-        public void OpenConnection()
-        {
-            _databaseConnection = _connectionMultiplexer.GetDatabase();
-        }
-
-        public void CloseConnection()
-        {
-            _databaseConnection = null;
-        }
-
+        
 
         public List<M> Search<M>(List<string> keys) where M : AbstractModel, new()
         {
+            this.OpenConnection();
+
             var taskList = new List<Task<RedisValue>>();
             var readBatch = _databaseConnection.CreateBatch();
 
@@ -44,7 +36,9 @@ namespace ThesisPrototype
                 var task = readBatch.StringGetAsync(key);
                 taskList.Add(task);
             }
+        
             readBatch.Execute();
+            this.CloseConnection();
 
             return taskList.Select(t => JsonConvert.DeserializeObject<M>(t.Result))
                            .ToList();
@@ -52,6 +46,8 @@ namespace ThesisPrototype
 
         public void Create<M>(Dictionary<string, M> keysAndValues) where M : AbstractModel, new()
         {
+            this.OpenConnection();
+
             List<Task> creationTasks = new List<Task>();
 
             foreach (var kv in keysAndValues)
@@ -75,6 +71,8 @@ namespace ThesisPrototype
 
         public void Delete<M>(List<string> keys) where M : AbstractModel, new()
         {
+            this.OpenConnection();
+
             List<Task> deletionTasks = new List<Task>();
 
             foreach (var key in keys)
@@ -88,6 +86,7 @@ namespace ThesisPrototype
             }
 
             Task.WaitAll(deletionTasks.ToArray());
+            this.CloseConnection();
         }
 
         public void TruncateAll()
@@ -136,5 +135,16 @@ namespace ThesisPrototype
             }
             return results;
         }
+
+        private void OpenConnection()
+        {
+            _databaseConnection = _connectionMultiplexer.GetDatabase();
+        }
+
+        private void CloseConnection()
+        {
+            _databaseConnection = null;
+        }
+
     }
 }
