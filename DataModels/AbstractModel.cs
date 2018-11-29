@@ -7,11 +7,6 @@ namespace ThesisPrototype
 {
     public abstract class AbstractModel
     {
-        public abstract void Randomize(int amountOfExistingModels, Random randomGenerator);
-
-        public abstract void RandomizeValuesExceptPrimaryKey(Random randomGenerator);
-
-
         public string GetPrimaryKeyFieldName()
         {
             var publicProperties = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);

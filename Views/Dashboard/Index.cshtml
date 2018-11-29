@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ThesisPrototype
+
+@inject UserManager<User> UserManager
+
+@{User currentUser = await UserManager.GetUserAsync(User);}
+@model IEnumerable<VesselViewModel>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Welcome, @currentUser.FirstName!</h2>
+
+<div class="container">
+    @foreach (var vesselViewModelGroup in Model.Split(3))
+    {
+        <div class="row">
+        @foreach(var vesselViewModel in vesselViewModelGroup)
+        {
+            <div class="card col-xs" style="margin-right: 10px;">
+                <img class="card-img-top" height="100px" width="100px" src=@Url.Content("~/images/"+ @vesselViewModel.ImageName) />
+                
+                <h5 class="card-header">@vesselViewModel.ShipName</h5>
+                <div class="card-body">   
+                    <a href="#" class="btn btn-primary">View details</a>
+                </div>
+            </div>
+        }
+        </div>
+    }
+</div>

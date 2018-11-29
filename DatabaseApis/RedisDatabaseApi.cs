@@ -80,7 +80,7 @@ namespace ThesisPrototype
                 var deleteStr = $"DEL '{key}'";
                 var cmdAndArgs = this.SeparateCmdAndArguments(deleteStr);
                 
-                // Note that this ExecuteAsync command will only be executed once creationBatch.Execute() is called
+                // Note that this ExecuteAsync command will only be executed once creationBatch.Execute() is called.
                 var deleteTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
                 deletionTasks.Add(deleteTask);
             }
@@ -126,7 +126,7 @@ namespace ThesisPrototype
 
                     results.Add(JsonConvert.DeserializeObject<M>(valueWithoutEnclosingQuotes));
                 }
-                catch (JsonSerializationException e)
+                catch (JsonSerializationException)
                 { } // Do nothing and continue
                 catch (Exception e)
                 {
@@ -145,6 +145,5 @@ namespace ThesisPrototype
         {
             _databaseConnection = null;
         }
-
     }
 }

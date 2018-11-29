@@ -1,0 +1,29 @@
+﻿@model ThesisPrototype.ViewModels.LoginViewModel 
+@{ 
+    ViewBag.Title = "Login"; 
+}  
+<h2>Login</h2>  
+
+<form method="post" asp-controller="Account" asp-action="Login"
+      asp-route-returnurl="@Model.ReturnUrl">
+    <div asp-validation-summary="ValidationSummary.ModelOnly"></div>
+
+    <div>
+        Username <br />
+        <label asp-for="Username"></label>
+        <input asp-for="Username" name="Username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+
+    <div>
+        Password <br />
+        <label asp-for="Password"></label>
+        <input type="password" asp-for="Password" name="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <br />
+    <input type="submit" value="Login" />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+</form>        
