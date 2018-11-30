@@ -11,6 +11,6 @@ namespace ThesisPrototype.Calculators
     /// </summary>
     public interface IKpiCalculator
     {
-        List<KpiValue> Calculate(List<SensorValuesRow> sensorValues);
+        KpiValue Calculate(List<SensorValuesRow> sensorValues);
     }
 }

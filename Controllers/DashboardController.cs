@@ -21,7 +21,7 @@ namespace ThesisPrototype.Controllers
                 var currentUser = base.GetCurrentUserEntity();
 
                 List<VesselViewModel> vesselViewModels = new List<VesselViewModel>(); 
-                var vesselsForUser = context.Vessels.Include(x => x.User)
+                var vesselsForUser = context.Ships.Include(x => x.User)
                                                     .Where(v => v.UserId == currentUser.UserId)
                                                     .ToList();
 

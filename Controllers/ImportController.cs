@@ -33,7 +33,7 @@ namespace ThesisPrototype.Controllers
             if(Request.Form.Files.Any() && Request.Form.Files.Count() == 1)
             {
                 var file = Request.Form.Files.First();
-                _importHandler.SaveImportAndReturnRows(file);
+                _importHandler.Handle(file);
 
                 return Ok();
             }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThesisPrototype;
 
 namespace ThesisPrototype.Migrations
 {
     [DbContext(typeof(PrototypeContext))]
-    partial class PrototypeContextModelSnapshot : ModelSnapshot
+    [Migration("20181130130039_AddedKpiEntity")]
+    partial class AddedKpiEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,39 +144,6 @@ namespace ThesisPrototype.Migrations
                     b.ToTable("Kpis");
                 });
 
-            modelBuilder.Entity("ThesisPrototype.Ship", b =>
-                {
-                    b.Property<long>("ShipId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CountryName");
-
-                    b.Property<string>("ImageName");
-
-                    b.Property<int>("ImoNumber");
-
-                    b.Property<string>("Name");
-
-                    b.Property<long>("UserId");
-
-                    b.Property<string>("UserId1");
-
-                    b.HasKey("ShipId");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("Ships");
-
-                    b.HasData(
-                        new { ShipId = 1L, CountryName = "Germany", ImageName = "ship1.jpg", ImoNumber = 1111111, Name = "Waage", UserId = 1L },
-                        new { ShipId = 2L, CountryName = "Germany", ImageName = "ship2.jpg", ImoNumber = 1111112, Name = "Grüblein", UserId = 2L },
-                        new { ShipId = 3L, CountryName = "Germany", ImageName = "ship3.jpg", ImoNumber = 1111113, Name = "Schlauer Fuchs", UserId = 3L },
-                        new { ShipId = 4L, CountryName = "Italy", ImageName = "ship4.jpg", ImoNumber = 1111114, Name = "Mandritto", UserId = 3L },
-                        new { ShipId = 5L, CountryName = "Italy", ImageName = "ship5.jpg", ImoNumber = 1111115, Name = "Sottani", UserId = 3L }
-                    );
-                });
-
             modelBuilder.Entity("ThesisPrototype.User", b =>
                 {
                     b.Property<string>("Id")
@@ -232,6 +201,39 @@ namespace ThesisPrototype.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("ThesisPrototype.Vessel", b =>
+                {
+                    b.Property<long>("VesselId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CountryName");
+
+                    b.Property<string>("ImageName");
+
+                    b.Property<int>("ImoNumber");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("UserId");
+
+                    b.Property<string>("UserId1");
+
+                    b.HasKey("VesselId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Vessels");
+
+                    b.HasData(
+                        new { VesselId = 1L, CountryName = "Germany", ImageName = "ship1.jpg", ImoNumber = 1111111, Name = "Waage", UserId = 1L },
+                        new { VesselId = 2L, CountryName = "Germany", ImageName = "ship2.jpg", ImoNumber = 1111112, Name = "Grüblein", UserId = 2L },
+                        new { VesselId = 3L, CountryName = "Germany", ImageName = "ship3.jpg", ImoNumber = 1111113, Name = "Schlauer Fuchs", UserId = 3L },
+                        new { VesselId = 4L, CountryName = "Italy", ImageName = "ship4.jpg", ImoNumber = 1111114, Name = "Mandritto", UserId = 3L },
+                        new { VesselId = 5L, CountryName = "Italy", ImageName = "ship5.jpg", ImoNumber = 1111115, Name = "Sottani", UserId = 3L }
+                    );
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -277,7 +279,7 @@ namespace ThesisPrototype.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ThesisPrototype.Ship", b =>
+            modelBuilder.Entity("ThesisPrototype.Vessel", b =>
                 {
                     b.HasOne("ThesisPrototype.User", "User")
                         .WithMany("Vessels")

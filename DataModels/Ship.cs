@@ -1,12 +1,12 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThesisPrototype
 {
-    public class Vessel : AbstractModel
+    public class Ship 
     {
-        [IsPrimaryKey]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long VesselId { get; set; }
+        public long ShipId { get; set; }
 
         public string Name { get; set; }
         public string ImageName { get; set; }

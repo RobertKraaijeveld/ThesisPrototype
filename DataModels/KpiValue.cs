@@ -7,7 +7,15 @@ namespace ThesisPrototype.DataModels
 {
     public class KpiValue
     {
-        public EKpi KpIType { get; set; }
+        public KpiValue(long shipId, Kpi kpi, double value)
+        {
+            this.ShipId = shipId;
+            this.Kpi = kpi;
+            this.Value = value;
+        }
+
+        public long ShipId { get; set; }
+        public Kpi Kpi { get; set; }
         public double Value { get; set; }
     }
 }

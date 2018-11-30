@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2011
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThesisPrototype", "ThesisPrototype.csproj", "{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrototypeStressTester", "..\PrototypeStressTester\PrototypeStressTester.csproj", "{D441C66A-C023-4792-AC74-499A0DD90CE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

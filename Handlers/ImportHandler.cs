@@ -4,48 +4,60 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using ThesisPrototype.DataModels;
+using ThesisPrototype.Calculators;
 
 namespace ThesisPrototype
 {
     public class ImportHandler
     {
-        private readonly RedisDatabaseApi _redisApi;
+        private readonly KpiCalculationHandler _kpiCalculationHandler;
 
-        public ImportHandler()
+        public ImportHandler(KpiCalculationHandler kpiCalculationHandler)
         {
-            // TODO: Get connection string / api reference in a cleaner way
-            _redisApi = new RedisDatabaseApi("192.168.99.100:7000"); 
+            _kpiCalculationHandler = kpiCalculationHandler;
         }
 
-        public List<SensorValuesRow> SaveImportAndReturnRows(IFormFile importFile)
+        public void Handle(IFormFile importFile)
         {
-            if(importFile.Length > 0)
+            var savedSensorValues = this.SaveImportAndReturnRows(importFile);
+            _kpiCalculationHandler.Handle(savedSensorValues);
+        }
+
+
+        private List<SensorValuesRow> SaveImportAndReturnRows(IFormFile importFile)
+        {
+            string importFileName = importFile.FileName;
+
+            long shipIdOfImport = GetShipIdFromFileName(importFileName);
+            DateTime dateTimeOfImport = GetImportDateFromFileName(importFileName);
+
+            if (importFile.Length > 0)
             {
                 var rows = new List<SensorValuesRow>();
 
-                using(var stream = new StreamReader(importFile.OpenReadStream()))
+                using (var stream = new StreamReader(importFile.OpenReadStream()))
                 {
                     string header = null;
                     string currentLine;
-                    
-                    while(stream.Peek() >= 0)
+
+                    while (stream.Peek() >= 0)
                     {
                         currentLine = stream.ReadLine();
 
                         if (header == null)
                         {
                             header = currentLine;
-                            continue;
+                            continue; // Skipping header
                         }
 
-                        string rowAsJson = this.RowToJson(header, currentLine);
-                        var rowAsModel = SensorValuesRow.CreateFromJson(rowAsJson);
-                        rows.Add(rowAsModel);
+                        Dictionary<ESensor, string> rowAsDict = this.RowToDictionary(header, currentLine);
+                        rows.Add(new SensorValuesRow(shipIdOfImport, dateTimeOfImport, rowAsDict));
                     }
                 }
 
                 // Saving all rows at once to avoid having to open a DB connection for each row
-                SaveSensorValues(rows.ToList()); // Skipping header
+                SaveSensorValues(rows.ToList());
                 return rows;
             }
             else
@@ -56,23 +68,46 @@ namespace ThesisPrototype
 
         private void SaveSensorValues(List<SensorValuesRow> rows)
         {
-            var rowsAsKeyAndJsonDict = rows.ToDictionary(k => k.UnixTs.ToString(), v => v);
+            var rowsAsKeyAndJsonDict = rows.ToDictionary(k => k.RowTimestamp.ToString(), v => v);
 
-            _redisApi.Create<SensorValuesRow>(rowsAsKeyAndJsonDict);
+            RedisDatabaseApi.Create<SensorValuesRow>(rowsAsKeyAndJsonDict);
         }
 
-        private string RowToJson(string header, string row)
+        private Dictionary<ESensor, string> RowToDictionary(string header, string row)
         {
             var headerAsArray = header.Split(',');
             var rowAsArray = row.Split(',');
 
-            var returnDictionary = new Dictionary<string, object>();
-            for(int i = 0; i < headerAsArray.Length; i++)
+            var returnDictionary = new Dictionary<ESensor, string>();
+            for (int i = 0; i < headerAsArray.Length; i++)
             {
-                returnDictionary.Add(headerAsArray[i], rowAsArray[i]);
+                var sensorNameAsEnum = (ESensor)Enum.Parse(typeof(ESensor), headerAsArray[i]);
+                returnDictionary.Add(sensorNameAsEnum, rowAsArray[i]);
             }
 
-            return JsonConvert.SerializeObject(returnDictionary);
+            return returnDictionary;
+        }
+
+        private long GetShipIdFromFileName(string fileName)
+        {
+            // filename is like 1111111_20180604_030000.csv. First 7 numbers are imo
+            var imo = int.Parse(fileName.Split('_')[0]);
+
+            using(var ctx = new PrototypeContext())
+            {
+                return ctx.Ships.Where(x => x.ImoNumber == imo).Single().ShipId;
+            }
+        }
+
+        private DateTime GetImportDateFromFileName(string fileName)
+        {
+            // filename is like 1111111_20180604_030000.csv. Second set of numbers is import datetime
+            var dateTimeNrs = fileName.Split('_')[1];
+            var yearStr = new string(dateTimeNrs.Take(4).ToArray());
+            var monthStr = new string(dateTimeNrs.Skip(4).Take(2).ToArray());
+            var dayStr = new string(dateTimeNrs.Skip(6).Take(2).ToArray());
+
+            return new DateTime(int.Parse(yearStr), int.Parse(monthStr), int.Parse(dayStr));
         }
     }
 }

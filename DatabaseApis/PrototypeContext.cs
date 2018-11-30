@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype
 {
     public class PrototypeContext : IdentityDbContext<User>
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Vessel> Vessels { get; set; }
+        public DbSet<Ship> Ships { get; set; }
+        public DbSet<Kpi> Kpis { get; set; } 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,13 +22,13 @@ namespace ThesisPrototype
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>().HasMany(u => u.Vessels);
-            modelBuilder.Entity<Vessel>().HasOne(v => v.User);
+            modelBuilder.Entity<Ship>().HasOne(v => v.User);
 
-            modelBuilder.Entity<Vessel>().HasData
+            modelBuilder.Entity<Ship>().HasData
             (
                 new
                 {
-                    VesselId = (long) 1,
+                    ShipId = (long) 1,
                     UserId = (long) 1,
                     Name = "Waage",
                     ImageName = "ship1.jpg",
@@ -35,7 +37,7 @@ namespace ThesisPrototype
                 },
                 new
                 {
-                    VesselId = (long) 2,
+                    ShipId = (long) 2,
                     UserId = (long) 2,
                     Name = "Grüblein",
                     ImageName = "ship2.jpg",
@@ -44,7 +46,7 @@ namespace ThesisPrototype
                 },
                 new
                 {
-                    VesselId = (long) 3,
+                    ShipId = (long) 3,
                     UserId = (long) 3,
                     Name = "Schlauer Fuchs",
                     ImageName = "ship3.jpg",
@@ -53,7 +55,7 @@ namespace ThesisPrototype
                 },
                 new
                 {
-                    VesselId = (long) 4,
+                    ShipId = (long) 4,
                     UserId = (long) 3,
                     Name = "Mandritto",
                     ImageName = "ship4.jpg",
@@ -62,7 +64,7 @@ namespace ThesisPrototype
                 },
                 new
                 {
-                    VesselId = (long) 5,
+                    ShipId = (long) 5,
                     UserId = (long) 3,
                     Name = "Sottani",
                     ImageName = "ship5.jpg",

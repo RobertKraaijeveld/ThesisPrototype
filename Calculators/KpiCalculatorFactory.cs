@@ -8,141 +8,142 @@ namespace ThesisPrototype.Calculators
 {
     public class KpiCalculatorFactory
     {
-        public IKpiCalculator GetCalculator(EKpi kpi)
+        public IKpiCalculator GetCalculator(long shipId, Kpi kpi)
         {
-            switch (kpi)
+            // In a real application you obviously wouldn't use the same 
+            // sensor and the same calculator to calculate different KPI's.
+            switch (kpi.KpiEnum) // TODO: ADD TRENDING CALCULATORS
             {
-                case EKpi.ExpensiveKpi1:
-                case EKpi.ExpensiveKpi2:
-                case EKpi.ExpensiveKpi3:
-                case EKpi.ExpensiveKpi4:
-                case EKpi.ExpensiveKpi5:
-                case EKpi.ExpensiveKpi6:
-                case EKpi.ExpensiveKpi7:
-                case EKpi.ExpensiveKpi8:
-                case EKpi.ExpensiveKpi9:
-                case EKpi.ExpensiveKpi10:
-                    break;
+                case EKpi.DailyExpensiveKpi1:
+                case EKpi.DailyExpensiveKpi2:
+                case EKpi.DailyExpensiveKpi3:
+                case EKpi.DailyExpensiveKpi4:
+                case EKpi.DailyExpensiveKpi5:
+                case EKpi.DailyExpensiveKpi6:
+                case EKpi.DailyExpensiveKpi7:
+                case EKpi.DailyExpensiveKpi8:
+                case EKpi.DailyExpensiveKpi9:
+                case EKpi.DailyExpensiveKpi10:
+                    return new ExpensiveKpiCalculator(shipId, ESensor.sensor100, kpi);
 
-                case EKpi.AveragesKpi1:
-                case EKpi.AveragesKpi2:
-                case EKpi.AveragesKpi3:
-                case EKpi.AveragesKpi4:
-                case EKpi.AveragesKpi5:
-                case EKpi.AveragesKpi6:
-                case EKpi.AveragesKpi7:
-                case EKpi.AveragesKpi8:
-                case EKpi.AveragesKpi9:
-                case EKpi.AveragesKpi10:
-                case EKpi.AveragesKpi11:
-                case EKpi.AveragesKpi12:
-                case EKpi.AveragesKpi13:
-                case EKpi.AveragesKpi14:
-                case EKpi.AveragesKpi15:
-                case EKpi.AveragesKpi16:
-                case EKpi.AveragesKpi17:
-                case EKpi.AveragesKpi18:
-                case EKpi.AveragesKpi19:
-                case EKpi.AveragesKpi20:
-                case EKpi.AveragesKpi21:
-                case EKpi.AveragesKpi22:
-                case EKpi.AveragesKpi23:
-                case EKpi.AveragesKpi24:
-                case EKpi.AveragesKpi25:
-                case EKpi.AveragesKpi26:
-                case EKpi.AveragesKpi27:
-                case EKpi.AveragesKpi28:
-                case EKpi.AveragesKpi29:
-                case EKpi.AveragesKpi30:
-                case EKpi.AveragesKpi31:
-                case EKpi.AveragesKpi32:
-                    break;
+                case EKpi.DailyAveragesKpi1:
+                case EKpi.DailyAveragesKpi2:
+                case EKpi.DailyAveragesKpi3:
+                case EKpi.DailyAveragesKpi4:
+                case EKpi.DailyAveragesKpi5:
+                case EKpi.DailyAveragesKpi6:
+                case EKpi.DailyAveragesKpi7:
+                case EKpi.DailyAveragesKpi8:
+                case EKpi.DailyAveragesKpi9:
+                case EKpi.DailyAveragesKpi10:
+                case EKpi.DailyAveragesKpi11:
+                case EKpi.DailyAveragesKpi12:
+                case EKpi.DailyAveragesKpi13:
+                case EKpi.DailyAveragesKpi14:
+                case EKpi.DailyAveragesKpi15:
+                case EKpi.DailyAveragesKpi16:
+                case EKpi.DailyAveragesKpi17:
+                case EKpi.DailyAveragesKpi18:
+                case EKpi.DailyAveragesKpi19:
+                case EKpi.DailyAveragesKpi20:
+                case EKpi.DailyAveragesKpi21:
+                case EKpi.DailyAveragesKpi22:
+                case EKpi.DailyAveragesKpi23:
+                case EKpi.DailyAveragesKpi24:
+                case EKpi.DailyAveragesKpi25:
+                case EKpi.DailyAveragesKpi26:
+                case EKpi.DailyAveragesKpi27:
+                case EKpi.DailyAveragesKpi28:
+                case EKpi.DailyAveragesKpi29:
+                case EKpi.DailyAveragesKpi30:
+                case EKpi.DailyAveragesKpi31:
+                case EKpi.DailyAveragesKpi32:
+                    return new AverageKpiCalculator(shipId, ESensor.sensor1, kpi);
 
+                case EKpi.DailyCombinationKpi1:
+                case EKpi.DailyCombinationKpi2:
+                case EKpi.DailyCombinationKpi3:
+                case EKpi.DailyCombinationKpi4:
+                case EKpi.DailyCombinationKpi5:
+                case EKpi.DailyCombinationKpi6:
+                case EKpi.DailyCombinationKpi7:
+                case EKpi.DailyCombinationKpi8:
+                case EKpi.DailyCombinationKpi9:
+                case EKpi.DailyCombinationKpi10:
+                case EKpi.DailyCombinationKpi11:
+                case EKpi.DailyCombinationKpi12:
+                case EKpi.DailyCombinationKpi13:
+                case EKpi.DailyCombinationKpi14:
+                case EKpi.DailyCombinationKpi15:
+                case EKpi.DailyCombinationKpi16:
+                case EKpi.DailyCombinationKpi17:
+                case EKpi.DailyCombinationKpi18:
+                case EKpi.DailyCombinationKpi19:
+                case EKpi.DailyCombinationKpi20:
+                case EKpi.DailyCombinationKpi21:
+                case EKpi.DailyCombinationKpi22:
+                case EKpi.DailyCombinationKpi23:
+                case EKpi.DailyCombinationKpi24:
+                case EKpi.DailyCombinationKpi25:
+                case EKpi.DailyCombinationKpi26:
+                case EKpi.DailyCombinationKpi27:
+                case EKpi.DailyCombinationKpi28:
+                case EKpi.DailyCombinationKpi29:
+                case EKpi.DailyCombinationKpi30:
+                case EKpi.DailyCombinationKpi31:
+                case EKpi.DailyCombinationKpi32:
+                case EKpi.DailyCombinationKpi33:
+                case EKpi.DailyCombinationKpi34:
+                case EKpi.DailyCombinationKpi35:
+                case EKpi.DailyCombinationKpi36:
+                case EKpi.DailyCombinationKpi37:
+                case EKpi.DailyCombinationKpi38:
+                case EKpi.DailyCombinationKpi39:
+                case EKpi.DailyCombinationKpi40:
+                case EKpi.DailyCombinationKpi41:
+                case EKpi.DailyCombinationKpi42:
+                case EKpi.DailyCombinationKpi43:
+                case EKpi.DailyCombinationKpi44:
+                case EKpi.DailyCombinationKpi45:
+                case EKpi.DailyCombinationKpi46:
+                case EKpi.DailyCombinationKpi47:
+                case EKpi.DailyCombinationKpi48:
+                case EKpi.DailyCombinationKpi49:
+                case EKpi.DailyCombinationKpi50:
+                case EKpi.DailyCombinationKpi51:
+                case EKpi.DailyCombinationKpi52:
+                case EKpi.DailyCombinationKpi53:
+                case EKpi.DailyCombinationKpi54:
+                case EKpi.DailyCombinationKpi55:
+                case EKpi.DailyCombinationKpi56:
+                case EKpi.DailyCombinationKpi57:
+                case EKpi.DailyCombinationKpi58:
+                case EKpi.DailyCombinationKpi59:
+                case EKpi.DailyCombinationKpi60:
+                case EKpi.DailyCombinationKpi61:
+                case EKpi.DailyCombinationKpi62:
+                case EKpi.DailyCombinationKpi63:
+                case EKpi.DailyCombinationKpi64:
+                case EKpi.DailyCombinationKpi65:
+                case EKpi.DailyCombinationKpi66:
+                case EKpi.DailyCombinationKpi67:
+                case EKpi.DailyCombinationKpi68:
+                case EKpi.DailyCombinationKpi69:
+                case EKpi.DailyCombinationKpi70:
+                case EKpi.DailyCombinationKpi71:
+                case EKpi.DailyCombinationKpi72:
+                case EKpi.DailyCombinationKpi73:
+                case EKpi.DailyCombinationKpi74:
+                case EKpi.DailyCombinationKpi75:
+                case EKpi.DailyCombinationKpi76:
+                case EKpi.DailyCombinationKpi77:
+                case EKpi.DailyCombinationKpi78:
+                case EKpi.DailyCombinationKpi79:
+                    return new CombinationKpiCalculator(shipId, new List<ESensor>() { ESensor.sensor10, ESensor.sensor15}, kpi);
 
-
-                case EKpi.CombinationKpi1:
-                case EKpi.CombinationKpi2:
-                case EKpi.CombinationKpi3:
-                case EKpi.CombinationKpi4:
-                case EKpi.CombinationKpi5:
-                case EKpi.CombinationKpi6:
-                case EKpi.CombinationKpi7:
-                case EKpi.CombinationKpi8:
-                case EKpi.CombinationKpi9:
-                case EKpi.CombinationKpi10:
-                case EKpi.CombinationKpi11:
-                case EKpi.CombinationKpi12:
-                case EKpi.CombinationKpi13:
-                case EKpi.CombinationKpi14:
-                case EKpi.CombinationKpi15:
-                case EKpi.CombinationKpi16:
-                case EKpi.CombinationKpi17:
-                case EKpi.CombinationKpi18:
-                case EKpi.CombinationKpi19:
-                case EKpi.CombinationKpi20:
-                case EKpi.CombinationKpi21:
-                case EKpi.CombinationKpi22:
-                case EKpi.CombinationKpi23:
-                case EKpi.CombinationKpi24:
-                case EKpi.CombinationKpi25:
-                case EKpi.CombinationKpi26:
-                case EKpi.CombinationKpi27:
-                case EKpi.CombinationKpi28:
-                case EKpi.CombinationKpi29:
-                case EKpi.CombinationKpi30:
-                case EKpi.CombinationKpi31:
-                case EKpi.CombinationKpi32:
-                case EKpi.CombinationKpi33:
-                case EKpi.CombinationKpi34:
-                case EKpi.CombinationKpi35:
-                case EKpi.CombinationKpi36:
-                case EKpi.CombinationKpi37:
-                case EKpi.CombinationKpi38:
-                case EKpi.CombinationKpi39:
-                case EKpi.CombinationKpi40:
-                case EKpi.CombinationKpi41:
-                case EKpi.CombinationKpi42:
-                case EKpi.CombinationKpi43:
-                case EKpi.CombinationKpi44:
-                case EKpi.CombinationKpi45:
-                case EKpi.CombinationKpi46:
-                case EKpi.CombinationKpi47:
-                case EKpi.CombinationKpi48:
-                case EKpi.CombinationKpi49:
-                case EKpi.CombinationKpi50:
-                case EKpi.CombinationKpi51:
-                case EKpi.CombinationKpi52:
-                case EKpi.CombinationKpi53:
-                case EKpi.CombinationKpi54:
-                case EKpi.CombinationKpi55:
-                case EKpi.CombinationKpi56:
-                case EKpi.CombinationKpi57:
-                case EKpi.CombinationKpi58:
-                case EKpi.CombinationKpi59:
-                case EKpi.CombinationKpi60:
-                case EKpi.CombinationKpi61:
-                case EKpi.CombinationKpi62:
-                case EKpi.CombinationKpi63:
-                case EKpi.CombinationKpi64:
-                case EKpi.CombinationKpi65:
-                case EKpi.CombinationKpi66:
-                case EKpi.CombinationKpi67:
-                case EKpi.CombinationKpi68:
-                case EKpi.CombinationKpi69:
-                case EKpi.CombinationKpi70:
-                case EKpi.CombinationKpi71:
-                case EKpi.CombinationKpi72:
-                case EKpi.CombinationKpi73:
-                case EKpi.CombinationKpi74:
-                case EKpi.CombinationKpi75:
-                case EKpi.CombinationKpi76:
-                case EKpi.CombinationKpi77:
-                case EKpi.CombinationKpi78:
-                case EKpi.CombinationKpi79:
-                    break;
+                default:
+                    throw new Exception("No KpiCalculator exists for this Kpi");
             }
-
-            return null;
         }
     }
 }

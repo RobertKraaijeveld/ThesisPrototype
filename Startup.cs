@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ThesisPrototype.Calculators;
 using ThesisPrototype.Seeders;
 
 namespace ThesisPrototype
@@ -20,6 +21,7 @@ namespace ThesisPrototype
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // ASP.NET / EF Services
             services.AddDbContext<PrototypeContext>();
 
             services.Configure<FormOptions>(o => {
@@ -44,7 +46,10 @@ namespace ThesisPrototype
 
             services.AddMvc();
 
-            services.AddScoped(typeof(ImportHandler), typeof(ImportHandler));
+            // Adding custom services
+            services.AddSingleton(typeof(ImportHandler), typeof(ImportHandler));
+            services.AddSingleton(typeof(KpiCalculatorFactory), typeof(KpiCalculatorFactory));
+            services.AddSingleton(typeof(KpiCalculationHandler), typeof(KpiCalculationHandler));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +75,7 @@ namespace ThesisPrototype
             });
 
             UserSeeder.SeedUsers(userManager);
+            KpiSeeder.SeedKpis();
         }
     }
 }

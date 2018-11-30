@@ -1,32 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace ThesisPrototype
 {
-    public class RedisDatabaseApi
+    public static class RedisDatabaseApi
     {
-        private readonly string _connectionString;
-        private readonly ConnectionMultiplexer _connectionMultiplexer;
-        private IDatabase _databaseConnection;
+        private static readonly string _connectionString;
+        private static readonly ConnectionMultiplexer _connectionMultiplexer;
+        private static IDatabase _databaseConnection;
 
 
-        public RedisDatabaseApi(string connectionString)
+        static RedisDatabaseApi()
         {
-            _connectionString = connectionString;
-
-            _connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
+            _connectionString = GetConnectionString();
+            _connectionMultiplexer = ConnectionMultiplexer.Connect(_connectionString);
         }
-
-
         
 
-        public List<M> Search<M>(List<string> keys) where M : AbstractModel, new()
+        public static List<M> Search<M>(List<string> keys) 
         {
-            this.OpenConnection();
+            OpenConnection();
 
             var taskList = new List<Task<RedisValue>>();
             var readBatch = _databaseConnection.CreateBatch();
@@ -38,15 +38,15 @@ namespace ThesisPrototype
             }
         
             readBatch.Execute();
-            this.CloseConnection();
+            CloseConnection();
 
             return taskList.Select(t => JsonConvert.DeserializeObject<M>(t.Result))
                            .ToList();
         }
 
-        public void Create<M>(Dictionary<string, M> keysAndValues) where M : AbstractModel, new()
+        public static void Create<M>(Dictionary<string, M> keysAndValues) 
         {
-            this.OpenConnection();
+            OpenConnection();
 
             List<Task> creationTasks = new List<Task>();
 
@@ -54,7 +54,7 @@ namespace ThesisPrototype
             {
                 var modelAsJson = JsonConvert.SerializeObject(kv.Value);
                 var createStr = $"SET '{kv.Key}' '{modelAsJson}'";
-                var cmdAndArgs = this.SeparateCmdAndArguments(createStr);
+                var cmdAndArgs = SeparateCmdAndArguments(createStr);
 
                 var createModelTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
                 creationTasks.Add(createModelTask);
@@ -63,22 +63,22 @@ namespace ThesisPrototype
             Task.WaitAll(creationTasks.ToArray());
         }
 
-        public void Update<M>(Dictionary<string, M> keysAndValues) where M : AbstractModel, new()
+        public static void Update<M>(Dictionary<string, M> keysAndValues) 
         {
             // Updating == creating in Redis
-            this.Create<M>(keysAndValues);
+            Create<M>(keysAndValues);
         }
 
-        public void Delete<M>(List<string> keys) where M : AbstractModel, new()
+        public static void Delete<M>(List<string> keys) 
         {
-            this.OpenConnection();
+            OpenConnection();
 
             List<Task> deletionTasks = new List<Task>();
 
             foreach (var key in keys)
             {
                 var deleteStr = $"DEL '{key}'";
-                var cmdAndArgs = this.SeparateCmdAndArguments(deleteStr);
+                var cmdAndArgs = SeparateCmdAndArguments(deleteStr);
                 
                 // Note that this ExecuteAsync command will only be executed once creationBatch.Execute() is called.
                 var deleteTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
@@ -86,10 +86,10 @@ namespace ThesisPrototype
             }
 
             Task.WaitAll(deletionTasks.ToArray());
-            this.CloseConnection();
+            CloseConnection();
         }
 
-        public void TruncateAll()
+        public static void TruncateAll()
         {
             using (var adminConnection = ConnectionMultiplexer.Connect($"{_connectionString},allowAdmin=true"))
             {
@@ -102,13 +102,13 @@ namespace ThesisPrototype
         }
 
 
-        private Tuple<string, string[]> SeparateCmdAndArguments(string cmdString)
+        private static Tuple<string, string[]> SeparateCmdAndArguments(string cmdString)
         {
             var splitCmd = cmdString.Split(' ');
             return new Tuple<string, string[]>(splitCmd[0], splitCmd.Skip(1).ToArray());
         }
 
-        private List<M> SerializeRedisValues<M>(RedisValue[] values) where M : AbstractModel, new()
+        private static List<M> SerializeRedisValues<M>(RedisValue[] values) 
         {
             var results = new List<M>();
 
@@ -136,12 +136,22 @@ namespace ThesisPrototype
             return results;
         }
 
-        private void OpenConnection()
+        private static string GetConnectionString()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            IConfigurationRoot configuration = builder.Build();
+            return configuration.GetSection("DatabaseConfiguration")["RedisConnectionString"];
+        }
+
+        private static void OpenConnection()
         {
             _databaseConnection = _connectionMultiplexer.GetDatabase();
         }
 
-        private void CloseConnection()
+        private static void CloseConnection()
         {
             _databaseConnection = null;
         }
