@@ -4,7 +4,7 @@
 @inject UserManager<User> UserManager
 
 @{User currentUser = await UserManager.GetUserAsync(User);}
-@model IEnumerable<VesselViewModel>
+@model IEnumerable<ShipViewModel>
 
 @{
     ViewData["Title"] = "Dashboard";

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThesisPrototype.DataModels;
@@ -17,12 +18,12 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues)
+        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var averageValueOfSensor = sensorValues.Select(sv => sv.SensorValues[_sensorToUse])
                                                    .Average();
 
-            return new KpiValue(_shipId, _kpi, averageValueOfSensor);
+            return new KpiValue(_shipId, _kpi, averageValueOfSensor, DateOfImport);
         }
     }
 }

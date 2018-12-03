@@ -19,10 +19,8 @@ namespace ThesisPrototype
         }
 
 
-        public void Handle(List<SensorValuesRow> importedRows)
+        public void Handle(List<SensorValuesRow> importedRows, long shipId, DateTime DateOfImport)
         {
-            var shipId = importedRows.First().ShipId; // ShipId is the same for all SensorValues within an import.
-
             List<KpiValue> KpiValuesToSave = new List<KpiValue>();
 
             using(var ctx = new PrototypeContext())
@@ -31,10 +29,12 @@ namespace ThesisPrototype
                 {
                     var calculatorForKpi = _kpiCalculatorFactory.GetCalculator(shipId, kpi);
 
-                    var calculatedKpiValue = calculatorForKpi.Calculate(importedRows);
+                    var calculatedKpiValue = calculatorForKpi.Calculate(importedRows, DateOfImport);
                     KpiValuesToSave.Add(calculatedKpiValue);
                 }
             }
+
+            RedisDatabaseApi.Create<KpiValue>(KpiValuesToSave);
         }
     }
 }

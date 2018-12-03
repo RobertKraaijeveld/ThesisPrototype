@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThesisPrototype.DataModels;
@@ -17,7 +18,7 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues)
+        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var multipliedSensorValues = sensorValues.Select(sv => {
                 double res = 0;
@@ -31,7 +32,7 @@ namespace ThesisPrototype.Calculators
             }).ToList();
 
             var sum = multipliedSensorValues.Sum();
-            return new KpiValue(_shipId, _kpi, sum);
+            return new KpiValue(_shipId, _kpi, sum, DateOfImport);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace ThesisPrototype
 {
-    public class VesselViewModel 
+    public class ShipViewModel 
     {
         public string ShipName { get; set; }
         public string ImageName { get; set; }

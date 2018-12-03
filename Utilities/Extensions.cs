@@ -36,5 +36,26 @@ public static class Extensions
         }  
         dynamic eoDynamic = expandoObj;  
         return eoDynamic as T;  
-    }  
+    }
+
+    /// <summary>
+    /// Gets the 00:00:00 instance of a DateTime
+    /// </summary>
+    public static DateTime AbsoluteStart(this DateTime dateTime)
+    {
+        return dateTime.Date;
+    }
+
+    /// <summary>
+    /// Gets the 11:59:59 instance of a DateTime
+    /// </summary>
+    public static DateTime AbsoluteEnd(this DateTime dateTime)
+    {
+        return AbsoluteStart(dateTime).AddDays(1).AddTicks(-1);
+    }
+
+    public static int ToUnixTs(this DateTime dt)
+    {
+        return (Int32)(dt.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+    }
 }

@@ -4,12 +4,23 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using ThesisPrototype.DataModels;
+using ThesisPrototype.RedisKeyFormatters;
 
 namespace ThesisPrototype
 {
     // Represents one row of an imported CSV file.
-    public class SensorValuesRow 
+    public class SensorValuesRow : IRedisModel
     {
+        [JsonConstructor]
+        public SensorValuesRow(int RowTimeStamp, long ShipId,
+                               DateTime ImportTimestamp, Dictionary<ESensor, double> SensorValues)
+        {
+            this.RowTimestamp = RowTimeStamp;
+            this.ShipId = ShipId;
+            this.ImportTimestamp = ImportTimestamp;
+            this.SensorValues = SensorValues;
+        }
+
         public SensorValuesRow(long shipId, DateTime importTimeStamp, 
                                Dictionary<ESensor, string> rowAsDictionary)
         {
@@ -18,8 +29,7 @@ namespace ThesisPrototype
 
             // Calculating row timestamp
             var timeStampValue = DateTime.Parse(rowAsDictionary[ESensor.ts]);
-            var asUnixTimestamp = (Int32) (timeStampValue.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            this.RowTimestamp = asUnixTimestamp;
+            this.RowTimestamp = timeStampValue.ToUnixTs();
 
             // Parsing all but the timestamp value to double.
             this.SensorValues = rowAsDictionary.Where(kv => !kv.Key.Equals(ESensor.ts))
@@ -27,9 +37,15 @@ namespace ThesisPrototype
         }
 
         public int RowTimestamp { get; set; }
-        
-        public long ShipId { get; set; } 
+
+        public long ShipId { get; set; }
         public DateTime ImportTimestamp { get; set; }
         public Dictionary<ESensor, double> SensorValues { get; set; }
+
+
+        public string ToRedisKey()
+        {
+            return SensorValuesRowKeyFormatter.GetKey(this.ShipId, this.RowTimestamp);
+        }
     }
 }

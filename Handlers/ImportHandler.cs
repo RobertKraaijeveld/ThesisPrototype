@@ -6,29 +6,44 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Calculators;
+using ThesisPrototype.Retrievers;
 
 namespace ThesisPrototype
 {
     public class ImportHandler
     {
         private readonly KpiCalculationHandler _kpiCalculationHandler;
+        private readonly SensorValuesRowRetriever _sensorValuesRowRetriever;
+        private readonly KpiValueRetriever _kpiValueRetriever;
 
-        public ImportHandler(KpiCalculationHandler kpiCalculationHandler)
+        public ImportHandler(KpiCalculationHandler kpiCalculationHandler,
+                             SensorValuesRowRetriever sensorValuesRowRetriever, 
+                             KpiValueRetriever kpiValueRetriever)
         {
             _kpiCalculationHandler = kpiCalculationHandler;
+            _sensorValuesRowRetriever = sensorValuesRowRetriever;
+            _kpiValueRetriever = kpiValueRetriever;
         }
+
 
         public void Handle(IFormFile importFile)
         {
-            var savedSensorValues = this.SaveImportAndReturnRows(importFile);
-            _kpiCalculationHandler.Handle(savedSensorValues);
+            var import = this.SaveImportAndReturnRows(importFile);
+            _kpiCalculationHandler.Handle(import.SensorValues, import.ShipId, import.ImportDate);
+
+            // TODO: TESTING
+            var beginmin = import.ImportDate.AbsoluteStart();
+            var beginMinuteUnixTs = import.ImportDate.AbsoluteStart().ToUnixTs();
+            var endMinuteUnixTs = import.ImportDate.AbsoluteEnd().ToUnixTs();
+            var valuesWeJustImported = _sensorValuesRowRetriever.GetRange(import.ShipId, beginMinuteUnixTs, endMinuteUnixTs);
+
+            var kpiWeJustCreated = _kpiValueRetriever.GetSingle(import.ShipId, EKpi.DailyAveragesKpi1, import.ImportDate);
         }
 
 
-        private List<SensorValuesRow> SaveImportAndReturnRows(IFormFile importFile)
+        private DataImport SaveImportAndReturnRows(IFormFile importFile)
         {
             string importFileName = importFile.FileName;
-
             long shipIdOfImport = GetShipIdFromFileName(importFileName);
             DateTime dateTimeOfImport = GetImportDateFromFileName(importFileName);
 
@@ -58,7 +73,9 @@ namespace ThesisPrototype
 
                 // Saving all rows at once to avoid having to open a DB connection for each row
                 SaveSensorValues(rows.ToList());
-                return rows;
+
+                var dataImport = new DataImport(shipIdOfImport, dateTimeOfImport, rows);
+                return dataImport;
             }
             else
             {
@@ -68,9 +85,7 @@ namespace ThesisPrototype
 
         private void SaveSensorValues(List<SensorValuesRow> rows)
         {
-            var rowsAsKeyAndJsonDict = rows.ToDictionary(k => k.RowTimestamp.ToString(), v => v);
-
-            RedisDatabaseApi.Create<SensorValuesRow>(rowsAsKeyAndJsonDict);
+            RedisDatabaseApi.Create<SensorValuesRow>(rows);
         }
 
         private Dictionary<ESensor, string> RowToDictionary(string header, string row)

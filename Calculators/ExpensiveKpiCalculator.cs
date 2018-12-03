@@ -19,7 +19,7 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues)
+        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var returnList = new List<KpiValue>();
 
@@ -28,22 +28,27 @@ namespace ThesisPrototype.Calculators
 
             var randomAlphaValue = new Random().Next(0, 1);
 
-            return ComputeSesSmoothedVectors(asVectors, randomAlphaValue).Select(v => new KpiValue(_shipId, _kpi, v.Y))
+            return ComputeSesSmoothedVectors(asVectors, randomAlphaValue).Select(v => new KpiValue(_shipId, _kpi, v.Y, DateOfImport))
                                                                          .Last();
         }
 
         private List<Vector2> ComputeSesSmoothedVectors(List<Vector2> originalVectors, double alpha)
         {
-            List<Vector2> smoothedVectors = new List<Vector2>();
+            List<Vector2> smoothedVectors = new List<Vector2>(originalVectors.Count);
+            originalVectors.ForEach(v => smoothedVectors.Add(new Vector2(v)));
+            Console.WriteLine("Originalvectors count = " + originalVectors.Count);
+            Console.WriteLine("SmoothedVectors count = " + smoothedVectors.Count);
 
             for (int i = 0; i < originalVectors.Count; i++)
             {
                 int originalVectorX = originalVectors[i].X;
-                double smoothedY = alpha * originalVectors[i].Y + (1.0f - alpha) * smoothedVectors[i - 1].Y;
 
-                smoothedVectors.Add(new Vector2(originalVectorX, smoothedY));
+                double smoothedY;
+                if (i > 0) smoothedY = alpha * originalVectors[i].Y + (1.0f - alpha) * smoothedVectors[i - 1].Y;
+                else smoothedY = originalVectors[i].Y;
+
+                smoothedVectors[i] = new Vector2(originalVectorX, smoothedY);
             }
-
             return smoothedVectors;
         }
 
@@ -56,6 +61,12 @@ namespace ThesisPrototype.Calculators
             {
                 this.X = X;
                 this.Y = Y;
+            }
+
+            public Vector2(Vector2 v)
+            {
+                this.X = v.X;
+                this.Y = v.Y;
             }
         }
     }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ThesisPrototype.Calculators;
+using ThesisPrototype.Handlers;
+using ThesisPrototype.Retrievers;
 using ThesisPrototype.Seeders;
 
 namespace ThesisPrototype
@@ -48,8 +50,14 @@ namespace ThesisPrototype
 
             // Adding custom services
             services.AddSingleton(typeof(ImportHandler), typeof(ImportHandler));
+
             services.AddSingleton(typeof(KpiCalculatorFactory), typeof(KpiCalculatorFactory));
             services.AddSingleton(typeof(KpiCalculationHandler), typeof(KpiCalculationHandler));
+
+            services.AddSingleton(typeof(GraphHandler), typeof(GraphHandler));
+
+            services.AddSingleton(typeof(SensorValuesRowRetriever), typeof(SensorValuesRowRetriever));
+            services.AddSingleton(typeof(KpiValueRetriever), typeof(KpiValueRetriever));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +79,7 @@ namespace ThesisPrototype
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Account}/{action=Index}/{id?}");
+                    template: "{controller=Account}/{action=Index}");
             });
 
             UserSeeder.SeedUsers(userManager);

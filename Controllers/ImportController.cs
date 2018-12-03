@@ -30,12 +30,14 @@ namespace ThesisPrototype.Controllers
         [DisableRequestSizeLimit]
         public IActionResult ImportFile()
         {
-            if(Request.Form.Files.Any() && Request.Form.Files.Count() == 1)
+            var fileCount = Request.Form.Files.Count();
+
+            if (fileCount == 1)
             {
                 var file = Request.Form.Files.First();
                 _importHandler.Handle(file);
 
-                return Ok();
+                return View("Index");
             }
             else
             {

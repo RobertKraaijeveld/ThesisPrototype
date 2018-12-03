@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype
 {
@@ -24,7 +25,7 @@ namespace ThesisPrototype
         }
         
 
-        public static List<M> Search<M>(List<string> keys) 
+        public static List<M> Search<M>(List<string> keys) where M: IRedisModel
         {
             OpenConnection();
 
@@ -44,32 +45,31 @@ namespace ThesisPrototype
                            .ToList();
         }
 
-        public static void Create<M>(Dictionary<string, M> keysAndValues) 
+        public static void Create<M>(List<M> newModels) where M : IRedisModel
         {
             OpenConnection();
 
             List<Task> creationTasks = new List<Task>();
 
-            foreach (var kv in keysAndValues)
+            foreach (var model in newModels)
             {
-                var modelAsJson = JsonConvert.SerializeObject(kv.Value);
-                var createStr = $"SET '{kv.Key}' '{modelAsJson}'";
-                var cmdAndArgs = SeparateCmdAndArguments(createStr);
+                var modelAsJson = JsonConvert.SerializeObject(model);
+                var createModelTask = _databaseConnection.ExecuteAsync("SET", new string[2] { model.ToRedisKey(), modelAsJson });
 
-                var createModelTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);
                 creationTasks.Add(createModelTask);
             }
 
             Task.WaitAll(creationTasks.ToArray());
+            CloseConnection();
         }
 
-        public static void Update<M>(Dictionary<string, M> keysAndValues) 
+        public static void Update<M>(List<M> updatedValues) where M : IRedisModel
         {
             // Updating == creating in Redis
-            Create<M>(keysAndValues);
+            Create<M>(updatedValues);
         }
 
-        public static void Delete<M>(List<string> keys) 
+        public static void Delete<M>(List<string> keys) where M : IRedisModel
         {
             OpenConnection();
 
@@ -106,34 +106,6 @@ namespace ThesisPrototype
         {
             var splitCmd = cmdString.Split(' ');
             return new Tuple<string, string[]>(splitCmd[0], splitCmd.Skip(1).ToArray());
-        }
-
-        private static List<M> SerializeRedisValues<M>(RedisValue[] values) 
-        {
-            var results = new List<M>();
-
-            // We can't tell whether a value is of type M beforehand. So we just try
-            // and try serialize the value; if this fails, its not of type M and we just continue.
-            foreach (var value in values)
-            {
-                try
-                {
-                    var valueStr = value.ToString();
-
-                    // stripping away first enclosing single quotes, otherwise JSON deserialization fails 
-                    var valueWithoutEnclosingQuotes = valueStr.Remove(0, 1);
-                    valueWithoutEnclosingQuotes = valueWithoutEnclosingQuotes.Remove(valueWithoutEnclosingQuotes.Length - 1, 1);
-
-                    results.Add(JsonConvert.DeserializeObject<M>(valueWithoutEnclosingQuotes));
-                }
-                catch (JsonSerializationException)
-                { } // Do nothing and continue
-                catch (Exception e)
-                {
-                    throw e; // Other type of exception, so it needs to be thrown
-                }
-            }
-            return results;
         }
 
         private static string GetConnectionString()

@@ -72,7 +72,7 @@ using ThesisPrototype;
             WriteLiteral("    ");
             EndContext();
             BeginContext(162, 329, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "14ceaa60bdbc4bba8623eecbcfd84271", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "6125acb173ca459a83ed67cfb2e25d6f", async() => {
                 BeginContext(276, 208, true);
                 WriteLiteral("\r\n        <ul class=\"nav navbar-nav navbar-right\">\r\n            <li>\r\n                <button type=\"submit\" class=\"btn btn-link navbar-btn navbar-link\">Log out</button>\r\n            </li>\r\n        </ul>\r\n    ");
                 EndContext();
@@ -114,7 +114,7 @@ else
             WriteLiteral("    <ul class=\"nav navbar-nav navbar-right\">\r\n        <li>");
             EndContext();
             BeginContext(564, 87, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "5636495dc64b4fa7aabcaa58a483dc87", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8d01db98f9d54bffb3b028022fcbaf05", async() => {
                 BeginContext(639, 8, true);
                 WriteLiteral("Register");
                 EndContext();
@@ -150,7 +150,7 @@ else
             WriteLiteral("            <li>");
             EndContext();
             BeginContext(765, 82, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8ce9d9762d4f45d0b82d29bea20e0ad7", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "92611a2457c945e3af2618cf203e919d", async() => {
                 BeginContext(837, 6, true);
                 WriteLiteral("Log in");
                 EndContext();
