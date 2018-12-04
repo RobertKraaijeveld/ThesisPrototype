@@ -1,7 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using ThesisPrototype
-
+@using ThesisPrototype.ViewModels
 
 @{
     ViewData["Title"] = "Dashboard";
 }
+
+@model ChartViewModel 
+
+
+<h1>@Model.title.text</h1>
+<div id="container"></div>
+
+<script src="~/lib/highcharts/highcharts.js"></script>
+<script type="text/javascript">
+    Highcharts.chart('container', {
+        title: @Html.Raw(Json.Serialize(@Model.title)),
+        series: @Html.Raw(Json.Serialize(@Model.series))
+    });
+</script>
+

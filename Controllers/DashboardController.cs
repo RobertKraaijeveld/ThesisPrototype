@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Handlers;
 using ThesisPrototype.Retrievers;
+using ThesisPrototype.ViewModels;
 
 namespace ThesisPrototype.Controllers
 {
@@ -51,16 +52,15 @@ namespace ThesisPrototype.Controllers
             }
         }
 
-        [HttpGet("Details/{shipName}")]
         public IActionResult Details(string shipName)
         {
-            // TODO: Construct graphs/tables for the ship, pass them to a view.
             using (var context = new PrototypeContext())
             {
                 var ship = context.Ships.Single(x => x.Name == shipName);
 
                 var testKpiVals = _kpiValueRetriever.GetSingle(ship.ShipId, EKpi.DailyAveragesKpi1, new DateTime(2000, 1, 1));
-                var testGraph = _graphHandler.CreateKpiChartViewModel("Test Chart #1", new List<KpiValue>() {testKpiVals});
+                ChartViewModel testGraph = _graphHandler.CreateKpiChartViewModel(titleText: EKpi.DailyAveragesKpi1.ToString(), 
+                                                                                 kpiValues: new List<KpiValue>() {testKpiVals});
 
                 return View(testGraph);
             }

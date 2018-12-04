@@ -80,6 +80,11 @@ namespace ThesisPrototype
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Account}/{action=Index}");
+
+                routes.MapRoute(
+                    name: "shipDetails",
+                    template: "Dashboard/Details/{shipName}",
+                    defaults: new { controller = "Dashboard", action = "Details" });
             });
 
             UserSeeder.SeedUsers(userManager);

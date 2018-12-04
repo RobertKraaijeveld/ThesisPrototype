@@ -23,7 +23,8 @@
                 
                 <h5 class="card-header">@vesselViewModel.ShipName</h5>
                 <div class="card-body">   
-                    <a href="#" class="btn btn-primary">View details</a>
+                    <a href="@Url.RouteUrl("shipDetails", new { shipName = @vesselViewModel.ShipName })" 
+                       class="btn btn-primary">View details</a>
                 </div>
             </div>
         }
