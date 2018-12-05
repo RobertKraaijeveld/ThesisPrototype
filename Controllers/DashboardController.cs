@@ -36,8 +36,8 @@ namespace ThesisPrototype.Controllers
 
                 List<ShipViewModel> shipViewModels = new List<ShipViewModel>();
                 var shipsForUser = context.Ships.Include(x => x.User)
-                                                  .Where(v => v.UserId == currentUser.UserId)
-                                                  .ToList();
+                                                .Where(v => v.UserId == currentUser.UserId)
+                                                .ToList();
 
                 foreach (var vessel in shipsForUser)
                 {
@@ -56,13 +56,14 @@ namespace ThesisPrototype.Controllers
         {
             using (var context = new PrototypeContext())
             {
-                var ship = context.Ships.Single(x => x.Name == shipName);
+                Ship ship = context.Ships.Single(x => x.Name == shipName);
 
-                var testKpiVals = _kpiValueRetriever.GetSingle(ship.ShipId, EKpi.DailyAveragesKpi1, new DateTime(2000, 1, 1));
-                ChartViewModel testGraph = _graphHandler.CreateKpiChartViewModel(titleText: EKpi.DailyAveragesKpi1.ToString(), 
-                                                                                 kpiValues: new List<KpiValue>() {testKpiVals});
+                List<ChartViewModel> graphs = 
+                        _graphHandler.GetDefaultKpiChartViewModels(ship.ShipId,
+                                                                   rangeBegin: DateTime.Today.AddMonths(-1), 
+                                                                   rangeEnd: DateTime.Today);
 
-                return View(testGraph);
+                return View(graphs);
             }
         }
     }

@@ -12,6 +12,7 @@ namespace ThesisPrototype
 {
     public class ImportHandler
     {
+        private readonly static int SENSORVALUES_AMOUNT_PER_IMPORT = 1440;
         private readonly KpiCalculationHandler _kpiCalculationHandler;
         private readonly SensorValuesRowRetriever _sensorValuesRowRetriever;
         private readonly KpiValueRetriever _kpiValueRetriever;
@@ -26,24 +27,18 @@ namespace ThesisPrototype
         }
 
 
-        public void Handle(IFormFile importFile)
+        public void Handle(FileStream importFile)
         {
-            var import = this.SaveImportAndReturnRows(importFile);
-            _kpiCalculationHandler.Handle(import.SensorValues, import.ShipId, import.ImportDate);
+            var importMetaAndRows = this.SaveImport(importFile);
+            DataImportMeta importMeta = importMetaAndRows.Item1;
+            List<SensorValuesRow> importRows = importMetaAndRows.Item2;
 
-            // TODO: TESTING
-            var beginmin = import.ImportDate.AbsoluteStart();
-            var beginMinuteUnixTs = import.ImportDate.AbsoluteStart().ToUnixTs();
-            var endMinuteUnixTs = import.ImportDate.AbsoluteEnd().ToUnixTs();
-            var valuesWeJustImported = _sensorValuesRowRetriever.GetRange(import.ShipId, beginMinuteUnixTs, endMinuteUnixTs);
-
-            var kpiWeJustCreated = _kpiValueRetriever.GetSingle(import.ShipId, EKpi.DailyAveragesKpi1, import.ImportDate);
+            _kpiCalculationHandler.Handle(importRows, importMeta.ShipId, importMeta.ImportDate);
         }
 
-
-        private DataImport SaveImportAndReturnRows(IFormFile importFile)
+        private Tuple<DataImportMeta, List<SensorValuesRow>> SaveImport(FileStream importFile)
         {
-            string importFileName = importFile.FileName;
+            string importFileName = importFile.Name.Split('\\').Last();
             long shipIdOfImport = GetShipIdFromFileName(importFileName);
             DateTime dateTimeOfImport = GetImportDateFromFileName(importFileName);
 
@@ -51,7 +46,7 @@ namespace ThesisPrototype
             {
                 var rows = new List<SensorValuesRow>();
 
-                using (var stream = new StreamReader(importFile.OpenReadStream()))
+                using (var stream = new StreamReader(importFile))
                 {
                     string header = null;
                     string currentLine;
@@ -66,16 +61,25 @@ namespace ThesisPrototype
                             continue; // Skipping header
                         }
 
-                        Dictionary<ESensor, string> rowAsDict = this.RowToDictionary(header, currentLine);
-                        rows.Add(new SensorValuesRow(shipIdOfImport, dateTimeOfImport, rowAsDict));
+                        // Throwing exception when > SENSORVALUES_AMOUNT_PER_IMPORT are found
+                        if(rows.Count < SENSORVALUES_AMOUNT_PER_IMPORT)
+                        {
+                            Dictionary<ESensor, string> rowAsDict = this.RowToDictionary(header, currentLine);
+                            rows.Add(new SensorValuesRow(shipIdOfImport, dateTimeOfImport, rowAsDict));
+                        }
+                        else
+                        {
+                            throw new Exception($"Import cannot have more than {SENSORVALUES_AMOUNT_PER_IMPORT} rows!");
+                        }
                     }
                 }
 
-                // Saving all rows at once to avoid having to open a DB connection for each row
-                SaveSensorValues(rows.ToList());
+                SaveSensorValues(rows);
 
-                var dataImport = new DataImport(shipIdOfImport, dateTimeOfImport, rows);
-                return dataImport;
+                var dataImportMeta = new DataImportMeta(shipIdOfImport, dateTimeOfImport);
+                SaveDataImportMeta(dataImportMeta);
+
+                return new Tuple<DataImportMeta, List<SensorValuesRow>>(dataImportMeta, rows);
             }
             else
             {
@@ -86,6 +90,15 @@ namespace ThesisPrototype
         private void SaveSensorValues(List<SensorValuesRow> rows)
         {
             RedisDatabaseApi.Create<SensorValuesRow>(rows);
+        }
+
+        private void SaveDataImportMeta(DataImportMeta dataImportMeta)
+        {
+            using(var context = new PrototypeContext())
+            {
+                context.DataImportMetas.Add(dataImportMeta);
+                context.SaveChanges();
+            }
         }
 
         private Dictionary<ESensor, string> RowToDictionary(string header, string row)

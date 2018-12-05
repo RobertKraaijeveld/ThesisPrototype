@@ -21,11 +21,11 @@ namespace ThesisPrototype.Calculators
         public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var multipliedSensorValues = sensorValues.Select(sv => {
-                double res = 0;
+                double res = 1;
 
                 foreach(var sensor in _sensorsToUse)
                 {
-                    res *= sv.SensorValues[sensor];
+                    res = (res * sv.SensorValues[sensor]);
                 }
             
                 return res;

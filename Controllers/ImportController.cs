@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +12,6 @@ using ThesisPrototype.ViewModels;
 
 namespace ThesisPrototype.Controllers
 {
-    [Authorize]
     public class ImportController : BaseController
     {
         private readonly ImportHandler _importHandler;
@@ -25,23 +26,12 @@ namespace ThesisPrototype.Controllers
             return View();
         }
 
-        [HttpPost]
-        [RequestSizeLimit(int.MaxValue)]
-        [DisableRequestSizeLimit]
-        public IActionResult ImportFile()
+        public IActionResult ImportLocalFile(string filePath)
         {
-            var fileCount = Request.Form.Files.Count();
-
-            if (fileCount == 1)
+            using (var fileStream = System.IO.File.OpenRead(filePath))
             {
-                var file = Request.Form.Files.First();
-                _importHandler.Handle(file);
-
-                return View("Index");
-            }
-            else
-            {
-                return BadRequest();
+                _importHandler.Handle(fileStream);
+                return Ok();
             }
         }
     }

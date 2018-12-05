@@ -1,22 +1,28 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using ThesisPrototype
-@using ThesisPrototype.ViewModels
+﻿@using ThesisPrototype.ViewModels
 
 @{
     ViewData["Title"] = "Dashboard";
 }
+@model List<ChartViewModel>
 
-@model ChartViewModel 
 
-
-<h1>@Model.title.text</h1>
-<div id="container"></div>
 
 <script src="~/lib/highcharts/highcharts.js"></script>
-<script type="text/javascript">
-    Highcharts.chart('container', {
-        title: @Html.Raw(Json.Serialize(@Model.title)),
-        series: @Html.Raw(Json.Serialize(@Model.series))
-    });
-</script>
+
+@foreach (var chart in @Model)
+{
+    <div id="@chart.Id"></div>
+    <script type="text/javascript">
+        Highcharts.chart("@chart.Id", {
+            chart: {
+                type: 'spline'
+            },
+            title: @Html.Raw(Json.Serialize(@chart.title)),
+            series: @Html.Raw(Json.Serialize(@chart.series))
+         });
+    </script>
+}
+
+
+
 

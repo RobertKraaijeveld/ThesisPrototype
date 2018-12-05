@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ThesisPrototype;
 
 namespace ThesisPrototype.Migrations
 {
     [DbContext(typeof(PrototypeContext))]
-    partial class PrototypeContextModelSnapshot : ModelSnapshot
+    [Migration("20181205092357_AddedImportMeta_And_KpiType")]
+    partial class AddedImportMeta_And_KpiType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

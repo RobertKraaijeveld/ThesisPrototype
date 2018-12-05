@@ -4,28 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using ThesisPrototype.DataModels;
+using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.Seeders
 {
     public class KpiSeeder
     {
         /// <summary>
-        /// Seeds the database and the ASP.NET identity system with all KPI's.
+        /// Seeds the database with all KPI's.
         /// </summary>
         public static void SeedKpis()
         {
             using(var ctx = new PrototypeContext())
             {
-                int counter = 1;
                 foreach(EKpi kpi in Enum.GetValues(typeof(EKpi)))
                 {
-                    if(ctx.Kpis.Any(x => x.KpiId == counter) == false)
+                    if(ctx.Kpis.Any(x => x.KpiEnum.Equals(kpi)) == false)
                     {
-                        ctx.Kpis.Add(new Kpi(kpi));
+                        ctx.Kpis.Add(new Kpi(kpi, GetKpiTypeFromEnumName(kpi)));
                     }
-                    counter++;
                 }
                 ctx.SaveChanges();
+            }
+        }
+
+        private static EKpiType GetKpiTypeFromEnumName(EKpi kpiEnum)
+        {
+            if (kpiEnum.ToString().Contains("Average"))
+            {
+                return EKpiType.Average;
+            }
+            else if (kpiEnum.ToString().Contains("Combination"))
+            {
+                return EKpiType.Combination;
+            }
+            else 
+            {
+                return EKpiType.Trending;
             }
         }
     }

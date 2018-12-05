@@ -8,12 +8,11 @@ namespace ThesisPrototype.Retrievers
 {
     public class SensorValuesRowRetriever
     {
-        public SensorValuesRow GetSingle(long shipId, int minuteUnixTs)
+        public List<SensorValuesRow> Get(long shipId, int minuteUnixTs)
         {
             var key = SensorValuesRowKeyFormatter.GetKey(shipId, minuteUnixTs);
 
-            return RedisDatabaseApi.Search<SensorValuesRow>(new List<string>() {key})
-                                   .Single();
+            return RedisDatabaseApi.Search<SensorValuesRow>(new List<string>() {key});
         }
 
         public List<SensorValuesRow> GetRange(long shipId, int startMinuteUnixTs, int endMinuteUnixTs)

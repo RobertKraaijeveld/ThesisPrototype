@@ -1,8 +1,8 @@
 @using Microsoft.AspNetCore.Identity
 @using ThesisPrototype
 
-@using (Html.BeginForm("ImportFile", "Import", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("ImportFiles", "Import", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    <input type="file" name="file" />
+    <input type="file" name="file" multiple/>
     <input type="submit" name="Submit" id="Submit" value="Upload" />
 }

@@ -9,6 +9,7 @@ namespace ThesisPrototype
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Ship> Ships { get; set; }
+        public DbSet<DataImportMeta> DataImportMetas { get; set; }
         public DbSet<Kpi> Kpis { get; set; } 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

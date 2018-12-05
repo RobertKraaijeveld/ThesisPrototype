@@ -7,6 +7,7 @@ namespace ThesisPrototype.ViewModels
 {
     public class ChartViewModel
     {
+        public string Id;
         public ChartTitleViewModel title;
         public ChartSerieViewModel[] series;
     }

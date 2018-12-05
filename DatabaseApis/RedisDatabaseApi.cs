@@ -41,8 +41,17 @@ namespace ThesisPrototype
             readBatch.Execute();
             CloseConnection();
 
-            return taskList.Select(t => JsonConvert.DeserializeObject<M>(t.Result))
-                           .ToList();
+            var returnValues = new List<M>();
+            foreach (var completedReadTask in taskList)
+            {
+                if(completedReadTask.Result != RedisValue.Null)
+                {
+                    var deserializedResult = JsonConvert.DeserializeObject<M>(completedReadTask.Result);
+                    returnValues.Add(deserializedResult);
+                }
+            }
+
+            return returnValues;
         }
 
         public static void Create<M>(List<M> newModels) where M : IRedisModel

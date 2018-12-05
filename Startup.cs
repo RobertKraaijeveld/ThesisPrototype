@@ -56,6 +56,7 @@ namespace ThesisPrototype
 
             services.AddSingleton(typeof(GraphHandler), typeof(GraphHandler));
 
+            services.AddSingleton(typeof(KpiRetriever), typeof(KpiRetriever));
             services.AddSingleton(typeof(SensorValuesRowRetriever), typeof(SensorValuesRowRetriever));
             services.AddSingleton(typeof(KpiValueRetriever), typeof(KpiValueRetriever));
         }

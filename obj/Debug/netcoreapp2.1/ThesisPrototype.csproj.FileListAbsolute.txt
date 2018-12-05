@@ -26,5 +26,5 @@ C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\ThesisPro
 C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\ThesisPrototype.pdb
 C:\Projects\Afstudeerprototype\ThesisPrototype\bin\Debug\netcoreapp2.1\ThesisPrototype.Views.pdb
 C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\ThesisPrototype.csproj.CopyComplete
-C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\ThesisPrototype.csprojResolveAssemblyReference.cache
 C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\Razor\Views\Dashboard\Details.g.cshtml.cs
+C:\Projects\Afstudeerprototype\ThesisPrototype\obj\Debug\netcoreapp2.1\ThesisPrototype.csprojResolveAssemblyReference.cache
