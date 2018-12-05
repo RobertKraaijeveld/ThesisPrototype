@@ -12,7 +12,7 @@ namespace ThesisPrototype.Handlers
     public class GraphHandler
     {
         private readonly KpiRetriever _kpiRetriever;
-        private readonly KpiValueRetriever _kpiValueRetriever; 
+        private readonly KpiValueRetriever _kpiValueRetriever;
         public GraphHandler(KpiRetriever kpiRetriever, KpiValueRetriever kpiValueRetriever)
         {
             _kpiRetriever = kpiRetriever;
@@ -25,55 +25,67 @@ namespace ThesisPrototype.Handlers
             // Only taking 5 KPIs per type so that charts dont get too crowded 
             // TODO: FIX THIS
             List<Kpi> averagesKpis = _kpiRetriever.GetKpisByType(EKpiType.Average)
-                                                  .Take(1)
+                                                   .Take(5)
                                                   .ToList();
 
             List<Kpi> combinationsKpis = _kpiRetriever.GetKpisByType(EKpiType.Combination)
-                                                      .Take(1)
+                                                      .Take(5)
                                                       .ToList();
 
             List<Kpi> trendingKpis = _kpiRetriever.GetKpisByType(EKpiType.Trending)
-                                                  .Take(1)
+                                                  .Take(5)
                                                   .ToList();
 
-            List<KpiValue> averagesKpiValues = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
-            List<KpiValue> combinationsKpiValues = GetValuesOfMultipleKpis(shipId, combinationsKpis, rangeBegin, rangeEnd);
-            List<KpiValue> trendingKpiValues = GetValuesOfMultipleKpis(shipId, trendingKpis, rangeBegin, rangeEnd);
+            List<List<KpiValue>> averagesKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
+            List<List<KpiValue>> combinationsKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, combinationsKpis, rangeBegin, rangeEnd);
+            List<List<KpiValue>> trendingKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, trendingKpis, rangeBegin, rangeEnd);
 
             var chartViewModels = new List<ChartViewModel>()
             {
-                CreateKpiChartViewModel("avg_kpis", "Averages KPIs", averagesKpiValues),
-                CreateKpiChartViewModel("combo_kpis", "Combination KPIs", combinationsKpiValues),
-                CreateKpiChartViewModel("trending_kpis", "Trending KPIs", trendingKpiValues),
+                CreateKpiChartViewModel("avg_kpis", "Averages KPIs", averagesKpiValuesPerKpi),
+                CreateKpiChartViewModel("combo_kpis", "Combination KPIs", combinationsKpiValuesPerKpi),
+                CreateKpiChartViewModel("trending_kpis", "Trending KPIs", trendingKpiValuesPerKpi),
             };
 
             return chartViewModels;
         }
 
-        private List<KpiValue> GetValuesOfMultipleKpis(long shipId, List<Kpi> kpis, DateTime rangeBegin, DateTime rangeEnd)
+        private List<List<KpiValue>> GetValuesOfMultipleKpis(long shipId, List<Kpi> kpis, DateTime rangeBegin, DateTime rangeEnd)
         {
-            return _kpiValueRetriever.GetRange(shipId, kpis.Select(x => x.KpiEnum).ToList(), 
-                                               rangeBegin, rangeEnd);
+            var valuesPerKpi = new List<List<KpiValue>>();
+
+            foreach (var kpi in kpis)
+            {
+                valuesPerKpi.Add(_kpiValueRetriever.GetRange(shipId, kpis.Select(x => x.KpiEnum).ToList(),
+                                                             rangeBegin, rangeEnd));
+            }
+            return valuesPerKpi;
         }
 
-        private ChartViewModel CreateKpiChartViewModel(string chartId, string titleText, List<KpiValue> kpiValues)
+        private ChartViewModel CreateKpiChartViewModel(string chartId, string titleText, List<List<KpiValue>> kpiValuesPerKpi)
         {
             return new ChartViewModel()
             {
                 Id = chartId,
-                title = new ChartTitleViewModel() {text = titleText},
-                series = new[] {CreateSeriesObject(kpiValues)}
+                title = new ChartTitleViewModel() { text = titleText },
+                series = CreateSeriesObjects(kpiValuesPerKpi)
             };
         }
 
-        private ChartSerieViewModel CreateSeriesObject(List<KpiValue> kpiValues)
+        private ChartSerieViewModel[] CreateSeriesObjects(List<List<KpiValue>> kpiValuesPerKpi)
         {
-            return new ChartSerieViewModel()
+            var chartSerieViewModels = new List<ChartSerieViewModel>();
+
+            foreach (var kpiValues in kpiValuesPerKpi)
             {
-                name = "",
-                data = kpiValues.Select(v => new ChartDataPointViewModel(){ x = v.Date.ToUnixTs(), y = v.Value})
+                chartSerieViewModels.Add(new ChartSerieViewModel()
+                {
+                    name = "",
+                    data = kpiValues.Select(v => new ChartDataPointViewModel() { x = v.Date.ToUnixTs(), y = v.Value })
                                 .ToArray()
-            };
+                });
+            }
+            return chartSerieViewModels.ToArray();
         }
     }
 }
