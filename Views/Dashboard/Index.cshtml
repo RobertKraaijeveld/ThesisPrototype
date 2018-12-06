@@ -1,33 +1,59 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using ThesisPrototype
+﻿@using ThesisPrototype.Utilities
 
-@inject UserManager<User> UserManager
-
-@{User currentUser = await UserManager.GetUserAsync(User);}
-@model IEnumerable<ShipViewModel>
+@model IEnumerable<ThesisPrototype.ViewModels.ShipViewModel>
 
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<h2>Welcome, @currentUser.FirstName!</h2>
+<h2>Welcome, @User.Identity.Name!</h2>
 
 <div class="container">
-    @foreach (var vesselViewModelGroup in Model.Split(3))
+    @{ bool addNewShipCardHasBeenDrawn = false; }
+
+    @foreach (var vesselViewModelGroup in Model.Split(4))
     {
-        <div class="row">
-        @foreach(var vesselViewModel in vesselViewModelGroup)
+    <div class="row">
+        @foreach (var vesselViewModel in vesselViewModelGroup)
         {
-            <div class="card col-xs" style="margin-right: 10px;">
-                <img class="card-img-top" height="100px" width="100px" src=@Url.Content("~/images/"+ @vesselViewModel.ImageName) />
-                
+            <div class="card col-xs shipThumbnail">
+                <img class="card-img-top" src=@Url.Content("~/images/" + @vesselViewModel.ImageName) />
+
                 <h5 class="card-header">@vesselViewModel.ShipName</h5>
-                <div class="card-body">   
-                    <a href="@Url.RouteUrl("shipDetails", new { shipName = @vesselViewModel.ShipName })" 
-                       class="btn btn-primary">View details</a>
+                <div class="card-body">
+                     @* Make hidden POST form here instead of GET actionlink *@
+                    @using (Html.BeginForm("DeleteShip", "Dashboard", FormMethod.Post))
+                    {
+                        <input type="hidden" value="@vesselViewModel.ShipId" name="shipId"/>
+                        <button type="submit" class="btn cardBtn" onclick="return confirm('Are you sure you wish to delete this ship?');">
+                            Delete
+                        </button>
+                    }
+
+                    <a href="@Url.RouteUrl("shipDetails", new {shipName = @vesselViewModel.ShipName})"
+                       class="btn btn-primary cardBtn">View details</a>
                 </div>
             </div>
         }
-        </div>
+
+        @if (vesselViewModelGroup.Count < 4)
+        {
+            { addNewShipCardHasBeenDrawn = true; }
+
+            @Html.Partial("_CreateShipCard", Model)
+        }
+    </div>
     }
+
+
+    @*
+        'Add new ship' card has not been drawn on a row with existing ships,
+        so we draw it on a new row.
+    *@
+
+    @if (addNewShipCardHasBeenDrawn == false)
+    {
+        @Html.Partial("_CreateShipCard", Model)
+    }
+
 </div>

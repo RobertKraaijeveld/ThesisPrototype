@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.DataModels
 {
     public class User : IdentityUser
     {
@@ -9,7 +8,5 @@ namespace ThesisPrototype
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
-        public ICollection<Ship> Vessels { get; set; }
     }
 }

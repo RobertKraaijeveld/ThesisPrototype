@@ -1,0 +1,23 @@
+﻿
+<div id="createShipPanelPartialResult"></div>
+
+<div class="card col-xs shipThumbnail">
+
+    <img class="card-img" src=@Url.Content("~/images/add_new_icon.png") alt="Add new ship">
+
+    <h5 class="card-header">Add new</h5>
+    <div class="card-body">
+        
+        @* Should call controller method which returns partial for ship creation *@
+        <button class="btn btn-primary" id="getCreateNewShipPanelPartialBtn">Add</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $('#getCreateNewShipPanelPartialBtn').click(function () {
+        console.log('Clicki');
+        var url = '@Url.Action("GetCreateShipPanelPartial")';
+        $('#createShipPanelPartialResult').load(url);
+    });
+</script>

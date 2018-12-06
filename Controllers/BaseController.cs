@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ThesisPrototype.DatabaseApis;
+using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype.Controllers
 {
@@ -21,10 +20,26 @@ namespace ThesisPrototype.Controllers
 
         protected User GetCurrentUserEntity()
         {
-            var getUserTask = _userManager.GetUserAsync(HttpContext.User);
+            var getUserTask = _userManager.Users
+                                          .SingleAsync(u => u.UserName.Equals(HttpContext.User.Identity.Name));
             getUserTask.Wait();
             
             return getUserTask.Result;
+        }
+
+        protected ICollection<Ship> GetShipsEntitiesOfCurrentUser()
+        {
+            var currentUser = GetCurrentUserEntity();
+            using (var context = new PrototypeContext())
+            {
+                var currUser = GetCurrentUserEntity();
+                return context.Ships.Where(s => s.UserId == currentUser.UserId).ToList();
+            }
+        }
+
+        protected bool CurrentUserIsAllowedAccessToShip(long shipId)
+        {
+            return GetShipsEntitiesOfCurrentUser().Any(s => s.ShipId == shipId);
         }
     }
 }

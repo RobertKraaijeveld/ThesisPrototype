@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ThesisPrototype.Calculators;
+using ThesisPrototype.DatabaseApis;
+using ThesisPrototype.DataModels;
 using ThesisPrototype.Handlers;
 using ThesisPrototype.Retrievers;
 using ThesisPrototype.Seeders;
@@ -89,6 +91,7 @@ namespace ThesisPrototype
             });
 
             UserSeeder.SeedUsers(userManager);
+            ShipSeeder.SeedShips();
             KpiSeeder.SeedKpis();
         }
     }

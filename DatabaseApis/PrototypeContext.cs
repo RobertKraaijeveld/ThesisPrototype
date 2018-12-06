@@ -1,13 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ThesisPrototype.DataModels;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.DatabaseApis
 {
     public class PrototypeContext : IdentityDbContext<User>
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Ship> Ships { get; set; }
         public DbSet<DataImportMeta> DataImportMetas { get; set; }
         public DbSet<Kpi> Kpis { get; set; } 
@@ -22,51 +20,50 @@ namespace ThesisPrototype
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().HasMany(u => u.Vessels);
-            modelBuilder.Entity<Ship>().HasOne(v => v.User);
+            modelBuilder.Entity<Ship>().HasOne<User>(x => x.User);
 
             modelBuilder.Entity<Ship>().HasData
             (
-                new
+                new Ship
                 {
-                    ShipId = (long) 1,
-                    UserId = (long) 1,
+                    ShipId = 1,
+                    UserId = 1,
                     Name = "Waage",
                     ImageName = "ship1.jpg",
                     CountryName = "Germany",
                     ImoNumber = 1111111
                 },
-                new
+                new Ship
                 {
-                    ShipId = (long) 2,
-                    UserId = (long) 2,
+                    ShipId = 2,
+                    UserId = 2,
                     Name = "Grüblein",
                     ImageName = "ship2.jpg",
                     CountryName = "Germany",
                     ImoNumber = 1111112
                 },
-                new
+                new Ship
                 {
-                    ShipId = (long) 3,
-                    UserId = (long) 3,
+                    ShipId = 3,
+                    UserId = 3,
                     Name = "Schlauer Fuchs",
                     ImageName = "ship3.jpg",
                     CountryName = "Germany",
                     ImoNumber = 1111113
                 },
-                new
+                new Ship
                 {
-                    ShipId = (long) 4,
-                    UserId = (long) 3,
+                    ShipId = 4,
+                    UserId = 3,
                     Name = "Mandritto",
                     ImageName = "ship4.jpg",
                     CountryName = "Italy",
                     ImoNumber = 1111114
                 },
-                new
+                new Ship
                 {
-                    ShipId = (long) 5,
-                    UserId = (long) 3,
+                    ShipId = 5,
+                    UserId = 3,
                     Name = "Sottani",
                     ImageName = "ship5.jpg",
                     CountryName = "Italy",

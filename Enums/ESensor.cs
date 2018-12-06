@@ -1,4 +1,4 @@
-namespace ThesisPrototype
+namespace ThesisPrototype.Enums
 {
     public enum ESensor
     {

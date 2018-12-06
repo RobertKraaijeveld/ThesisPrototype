@@ -1,3 +1,18 @@
 .globalnavbar {
     margin-bottom: 50px;
 }
+
+.shipThumbnail {
+    max-width: 150px;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.shipThumbnail img {
+    width: 150px !important;
+    height: 100px !important;
+}
+
+.cardBtn {
+    margin-bottom: 5px;
+}

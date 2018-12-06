@@ -1,6 +1,4 @@
-using System;
-
-namespace ThesisPrototype
+namespace ThesisPrototype.Handlers
 {
     public class LoginHandler
     {

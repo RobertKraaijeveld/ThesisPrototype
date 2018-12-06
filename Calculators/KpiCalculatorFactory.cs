@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ThesisPrototype.DataModels;
+using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.Calculators
 {

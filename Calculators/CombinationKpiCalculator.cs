@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThesisPrototype.DataModels;
+using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.Calculators
 {

@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.Seeders
 {
-    public class KpiSeeder
+    public static class KpiSeeder
     {
         /// <summary>
         /// Seeds the database with all KPI's.

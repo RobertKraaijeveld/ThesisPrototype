@@ -1,14 +1,7 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Mime;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ThesisPrototype.ViewModels;
+using ThesisPrototype.DataModels;
+using ThesisPrototype.Handlers;
 
 namespace ThesisPrototype.Controllers
 {

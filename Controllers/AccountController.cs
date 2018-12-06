@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ThesisPrototype.Controllers;
+using ThesisPrototype.DataModels;
 using ThesisPrototype.ViewModels;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.Controllers
 {
     public class AccountController : BaseController
     {
@@ -31,7 +27,7 @@ namespace ThesisPrototype
         {
             if(User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
 
-            var model = new LoginViewModel { ReturnUrl = returnUrl };
+            var model = new LoginViewModel { ReturnUrl = "/Dashboard" };
             return View(model);
         }
 
@@ -85,7 +81,7 @@ namespace ThesisPrototype
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {

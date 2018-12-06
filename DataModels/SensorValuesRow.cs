@@ -1,12 +1,12 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
+using System.Linq;
 using Newtonsoft.Json;
-using ThesisPrototype.DataModels;
+using ThesisPrototype.Enums;
 using ThesisPrototype.RedisKeyFormatters;
+using ThesisPrototype.Utilities;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.DataModels
 {
     // Represents one row of an imported CSV file.
     public class SensorValuesRow : IRedisModel

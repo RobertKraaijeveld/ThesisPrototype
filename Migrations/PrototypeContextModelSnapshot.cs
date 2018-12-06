@@ -3,8 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ThesisPrototype;
+using ThesisPrototype.DatabaseApis;
 
 namespace ThesisPrototype.Migrations
 {
@@ -297,7 +296,7 @@ namespace ThesisPrototype.Migrations
             modelBuilder.Entity("ThesisPrototype.Ship", b =>
                 {
                     b.HasOne("ThesisPrototype.User", "User")
-                        .WithMany("Vessels")
+                        .WithMany("Ships")
                         .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618

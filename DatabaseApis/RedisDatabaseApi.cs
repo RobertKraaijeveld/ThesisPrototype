@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using ThesisPrototype.DataModels;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.DatabaseApis
 {
     public static class RedisDatabaseApi
     {

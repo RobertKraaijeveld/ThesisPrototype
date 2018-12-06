@@ -1,14 +1,13 @@
 using System;
-using System.Linq;
-using System.IO;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using System.IO;
+using System.Linq;
+using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
-using ThesisPrototype.Calculators;
+using ThesisPrototype.Enums;
 using ThesisPrototype.Retrievers;
 
-namespace ThesisPrototype
+namespace ThesisPrototype.Handlers
 {
     public class ImportHandler
     {

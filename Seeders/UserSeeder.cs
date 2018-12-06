@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using ThesisPrototype.DatabaseApis;
+using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype.Seeders
 {
-    public class UserSeeder
+    public static class UserSeeder
     {
         /// <summary>
         /// Seeds the database and the ASP.NET identity system with some starting users.
@@ -16,25 +16,30 @@ namespace ThesisPrototype.Seeders
         /// </summary>
         public static void SeedUsers(UserManager<User> userManager)
         {
-            var usersToBeSeeded = new List<User>()
+            using (var context = new PrototypeContext())
             {
-                new User() {UserId = 1, FirstName = "User", LastName = "1", UserName = "User1", Email = "user1@test.nl"},
-                new User() {UserId = 2, FirstName = "User", LastName = "2", UserName = "User2", Email = "user2@test.nl"},
-                new User() {UserId = 3, FirstName = "User", LastName = "3", UserName = "User3", Email = "user3@test.nl"}
-            };
-
-            foreach (var user in usersToBeSeeded)
-            {
-                if (user.Email != null && userManager.FindByEmailAsync(user.Email).Result == null)
+                var usersToBeSeeded = new List<User>()
                 {
-                    IdentityResult result = userManager.CreateAsync(user, password: "password").Result;
+                    new User() {UserId = 1, FirstName = "User", LastName = "1", UserName = "User1", Email = "user1@test.nl" },
+                    new User() {UserId = 2, FirstName = "User", LastName = "2", UserName = "User2", Email = "user2@test.nl" },
+                    new User() {UserId = 3, FirstName = "User", LastName = "3", UserName = "User3", Email = "user3@test.nl" }
+                };
 
-                    if (!result.Succeeded)
+                foreach (var user in usersToBeSeeded)
+                {
+                    if (user.Email != null && userManager.FindByEmailAsync(user.Email).Result == null)
                     {
-                        throw new Exception("User seeding was unsuccessful.");
+                        IdentityResult result = userManager.CreateAsync(user, password: "password").Result;
+
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception("User identity seeding failed.");
+                        }
                     }
                 }
+
             }
+
         }
     }
 }
