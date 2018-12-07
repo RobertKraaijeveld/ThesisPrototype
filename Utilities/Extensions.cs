@@ -60,5 +60,10 @@ namespace ThesisPrototype.Utilities
         {
             return (Int32)(dt.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         }
+
+        public static DateTime FromUnixTs(this int unixTs)
+        {
+            return new DateTime(1970, 1, 1).AddSeconds(unixTs);
+        }
     }
 }

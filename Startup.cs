@@ -51,12 +51,12 @@ namespace ThesisPrototype
             services.AddMvc();
 
             // Adding custom services
-            services.AddSingleton(typeof(ImportHandler), typeof(ImportHandler));
+            services.AddSingleton(typeof(RedisImportHandler), typeof(RedisImportHandler));
 
             services.AddSingleton(typeof(KpiCalculatorFactory), typeof(KpiCalculatorFactory));
             services.AddSingleton(typeof(KpiCalculationHandler), typeof(KpiCalculationHandler));
 
-            services.AddSingleton(typeof(GraphHandler), typeof(GraphHandler));
+            services.AddSingleton(typeof(ChartHandler), typeof(ChartHandler));
 
             services.AddSingleton(typeof(KpiRetriever), typeof(KpiRetriever));
             services.AddSingleton(typeof(SensorValuesRowRetriever), typeof(SensorValuesRowRetriever));
@@ -86,7 +86,7 @@ namespace ThesisPrototype
 
                 routes.MapRoute(
                     name: "shipDetails",
-                    template: "Dashboard/Details/{shipName}",
+                    template: "Dashboard/Details/{shipId}",
                     defaults: new { controller = "Dashboard", action = "Details" });
             });
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Enums;
@@ -9,9 +10,20 @@ namespace ThesisPrototype.Calculators
     {
         public IKpiCalculator GetCalculator(long shipId, Kpi kpi)
         {
-            // In a real application you obviously wouldn't use the same 
-            // sensor and the same calculator to calculate different KPI's.
-            switch (kpi.KpiEnum) // TODO: ADD TRENDING CALCULATORS
+            // Randomly determining which sensor to use for calculating the KPI's.
+            // Obviosuly, in a 'real' application, a bit more thought is required to determine which KPI uses which sensor.
+            var random = new Random();
+
+            // possible sensors are: all sensors with the exception of the row timestamp
+            var possibleSensors = Enum.GetValues(typeof(ESensor)).Cast<ESensor>()
+                                                                 .Where(s => s.Equals(ESensor.ts) == false)
+                                                                 .ToArray();
+                                                                 
+            var randomSensor = (ESensor) possibleSensors.GetValue(random.Next(possibleSensors.Length));
+            var secondRandomSensor = (ESensor) possibleSensors.GetValue(random.Next(possibleSensors.Length));
+
+            
+            switch (kpi.KpiEnum)
             {
                 case EKpi.DailyExpensiveKpi1:
                 case EKpi.DailyExpensiveKpi2:
@@ -23,7 +35,7 @@ namespace ThesisPrototype.Calculators
                 case EKpi.DailyExpensiveKpi8:
                 case EKpi.DailyExpensiveKpi9:
                 case EKpi.DailyExpensiveKpi10:
-                    return new ExpensiveKpiCalculator(shipId, ESensor.sensor100, kpi);
+                    return new ExpensiveKpiCalculator(shipId, randomSensor, kpi);
 
                 case EKpi.DailyAveragesKpi1:
                 case EKpi.DailyAveragesKpi2:
@@ -57,7 +69,7 @@ namespace ThesisPrototype.Calculators
                 case EKpi.DailyAveragesKpi30:
                 case EKpi.DailyAveragesKpi31:
                 case EKpi.DailyAveragesKpi32:
-                    return new AverageKpiCalculator(shipId, ESensor.sensor1, kpi);
+                    return new AverageKpiCalculator(shipId, randomSensor, kpi);
 
                 case EKpi.DailyCombinationKpi1:
                 case EKpi.DailyCombinationKpi2:
@@ -138,7 +150,7 @@ namespace ThesisPrototype.Calculators
                 case EKpi.DailyCombinationKpi77:
                 case EKpi.DailyCombinationKpi78:
                 case EKpi.DailyCombinationKpi79:
-                    return new CombinationKpiCalculator(shipId, new List<ESensor>() { ESensor.sensor10, ESensor.sensor15}, kpi);
+                    return new CombinationKpiCalculator(shipId, new List<ESensor>() { randomSensor, secondRandomSensor}, kpi);
 
                 default:
                     throw new Exception("No KpiCalculator exists for this Kpi");

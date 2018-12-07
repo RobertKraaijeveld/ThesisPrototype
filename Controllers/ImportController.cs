@@ -7,11 +7,11 @@ namespace ThesisPrototype.Controllers
 {
     public class ImportController : BaseController
     {
-        private readonly ImportHandler _importHandler;
+        private readonly RedisImportHandler _redisImportHandler;
 
-        public ImportController(ImportHandler importHandler, UserManager<User> userManager) : base(userManager) 
+        public ImportController(RedisImportHandler redisImportHandler, UserManager<User> userManager) : base(userManager) 
         {
-            _importHandler = importHandler;
+            _redisImportHandler = redisImportHandler;
         }
 
         public IActionResult Index()
@@ -19,11 +19,11 @@ namespace ThesisPrototype.Controllers
             return View();
         }
 
-        public IActionResult ImportLocalFile(string filePath)
+        public IActionResult ImportLocalFile(string filePath, bool useEntityFramework = false)
         {
             using (var fileStream = System.IO.File.OpenRead(filePath))
             {
-                _importHandler.Handle(fileStream);
+                _redisImportHandler.Handle(fileStream);
                 return Ok();
             }
         }

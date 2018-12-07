@@ -3,9 +3,9 @@ using ThesisPrototype.RedisKeyFormatters;
 
 namespace ThesisPrototype.DataModels
 {
-    public class KpiValue : IRedisModel
+    public class RedisKpiValue : IRedisModel
     {
-        public KpiValue(long shipId, Kpi kpi, double value, DateTime date)
+        public RedisKpiValue(long shipId, Kpi kpi, double value, DateTime date)
         {
             this.ShipId = shipId;
             this.Kpi = kpi;

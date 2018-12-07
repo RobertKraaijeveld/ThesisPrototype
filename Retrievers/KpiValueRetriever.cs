@@ -9,14 +9,14 @@ namespace ThesisPrototype.Retrievers
 {
     public class KpiValueRetriever
     {
-        public List<KpiValue> Get(long shipId, EKpi kpiEnum, DateTime importDate)
+        public List<RedisKpiValue> Get(long shipId, EKpi kpiEnum, DateTime importDate)
         {
             var key = KpiValueKeyFormatter.GetKey(shipId, kpiEnum, importDate);
 
-            return RedisDatabaseApi.Search<KpiValue>(new List<string>() {key});
+            return RedisDatabaseApi.Search<RedisKpiValue>(new List<string>() {key});
         }
 
-        public List<KpiValue> GetRange(long shipId, List<EKpi> kpiEnums, DateTime startDate, DateTime endDate)
+        public List<RedisKpiValue> GetRange(long shipId, List<EKpi> kpiEnums, DateTime startDate, DateTime endDate)
         {
             List<string> keys = new List<string>();
 
@@ -28,7 +28,7 @@ namespace ThesisPrototype.Retrievers
                 }
             }
 
-            return RedisDatabaseApi.Search<KpiValue>(keys);
+            return RedisDatabaseApi.Search<RedisKpiValue>(keys);
         }
     }
 }

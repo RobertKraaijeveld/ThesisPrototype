@@ -8,14 +8,14 @@ namespace ThesisPrototype.Retrievers
 {
     public class SensorValuesRowRetriever
     {
-        public List<SensorValuesRow> Get(long shipId, int minuteUnixTs)
+        public List<RedisSensorValuesRow> Get(long shipId, int minuteUnixTs)
         {
             var key = SensorValuesRowKeyFormatter.GetKey(shipId, minuteUnixTs);
 
-            return RedisDatabaseApi.Search<SensorValuesRow>(new List<string>() {key});
+            return RedisDatabaseApi.Search<RedisSensorValuesRow>(new List<string>() {key});
         }
 
-        public List<SensorValuesRow> GetRange(long shipId, int startMinuteUnixTs, int endMinuteUnixTs)
+        public List<RedisSensorValuesRow> GetRange(long shipId, int startMinuteUnixTs, int endMinuteUnixTs)
         {
             var dtBegin = DateTimeOffset.FromUnixTimeSeconds(startMinuteUnixTs);
             var dtEnd = DateTimeOffset.FromUnixTimeSeconds(endMinuteUnixTs);
@@ -27,7 +27,7 @@ namespace ThesisPrototype.Retrievers
                 keys.Add(SensorValuesRowKeyFormatter.GetKey(shipId, (Int32) currMinute.ToUnixTimeSeconds()));
             }
 
-            return RedisDatabaseApi.Search<SensorValuesRow>(keys);
+            return RedisDatabaseApi.Search<RedisSensorValuesRow>(keys);
         }
     }
 }

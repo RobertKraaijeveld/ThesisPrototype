@@ -19,7 +19,7 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
+        public RedisKpiValue Calculate(List<RedisSensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var multipliedSensorValues = sensorValues.Select(sv => {
                 double res = 1;
@@ -33,7 +33,7 @@ namespace ThesisPrototype.Calculators
             }).ToList();
 
             var sum = multipliedSensorValues.Sum();
-            return new KpiValue(_shipId, _kpi, sum, DateOfImport);
+            return new RedisKpiValue(_shipId, _kpi, sum, DateOfImport);
         }
     }
 }

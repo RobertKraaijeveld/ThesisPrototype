@@ -19,16 +19,16 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
+        public RedisKpiValue Calculate(List<RedisSensorValuesRow> sensorValues, DateTime DateOfImport)
         {
-            var returnList = new List<KpiValue>();
+            var returnList = new List<RedisKpiValue>();
 
             var asVectors = sensorValues.Select(sv => new Vector2(sv.RowTimestamp, sv.SensorValues[_sensorToUse]))
                                         .ToList();
 
             var randomAlphaValue = new Random().Next(0, 1);
 
-            return ComputeSesSmoothedVectors(asVectors, randomAlphaValue).Select(v => new KpiValue(_shipId, _kpi, v.Y, DateOfImport))
+            return ComputeSesSmoothedVectors(asVectors, randomAlphaValue).Select(v => new RedisKpiValue(_shipId, _kpi, v.Y, DateOfImport))
                                                                          .Last();
         }
 

@@ -19,12 +19,12 @@ namespace ThesisPrototype.Calculators
             _kpi = kpi;
         }
 
-        public KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport)
+        public RedisKpiValue Calculate(List<RedisSensorValuesRow> sensorValues, DateTime DateOfImport)
         {
             var averageValueOfSensor = sensorValues.Select(sv => sv.SensorValues[_sensorToUse])
                                                    .Average();
 
-            return new KpiValue(_shipId, _kpi, averageValueOfSensor, DateOfImport);
+            return new RedisKpiValue(_shipId, _kpi, averageValueOfSensor, DateOfImport);
         }
     }
 }

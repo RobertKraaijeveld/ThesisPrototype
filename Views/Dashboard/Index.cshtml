@@ -11,7 +11,7 @@
 <div class="container">
     @{ bool addNewShipCardHasBeenDrawn = false; }
 
-    @foreach (var vesselViewModelGroup in Model.Split(4))
+    @foreach (var vesselViewModelGroup in Model.Split(6))
     {
     <div class="row">
         @foreach (var vesselViewModel in vesselViewModelGroup)
@@ -30,7 +30,7 @@
                         </button>
                     }
 
-                    <a href="@Url.RouteUrl("shipDetails", new {shipName = @vesselViewModel.ShipName})"
+                    <a href='@Url.RouteUrl("shipDetails", new {shipId = @vesselViewModel.ShipId})'
                        class="btn btn-primary cardBtn">View details</a>
                 </div>
             </div>

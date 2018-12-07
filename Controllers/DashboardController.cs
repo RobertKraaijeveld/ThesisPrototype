@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Handlers;
 using ThesisPrototype.Retrievers;
+using ThesisPrototype.Utilities;
 using ThesisPrototype.ViewModels;
 
 namespace ThesisPrototype.Controllers
@@ -15,12 +17,12 @@ namespace ThesisPrototype.Controllers
     [Authorize]
     public class DashboardController : BaseController
     {
-        private readonly GraphHandler _graphHandler;
+        private readonly ChartHandler _chartHandler;
 
-        public DashboardController(GraphHandler graphHandler,
+        public DashboardController(ChartHandler chartHandler,
                                    UserManager<User> userManager) : base(userManager)
         {
-            _graphHandler = graphHandler;
+            _chartHandler = chartHandler;
         }
 
 
@@ -41,27 +43,53 @@ namespace ThesisPrototype.Controllers
             return View("Index", shipViewModels);
         }
 
-        public IActionResult Details(string shipName)
+
+        #region Individual ship details / Graphs
+
+        public IActionResult Details(long shipId)
         {
             using (var context = new PrototypeContext())
             {
-                Ship ship = context.Ships.Single(x => x.Name == shipName);
-
-                if (base.CurrentUserIsAllowedAccessToShip(ship.ShipId))
+                try
                 {
-                    List<ChartViewModel> graphs =
-                        _graphHandler.GetDefaultKpiChartViewModels(ship.ShipId,
-                            rangeBegin: DateTime.Today.AddMonths(-1),
-                            rangeEnd: DateTime.Today);
+                    Ship ship = context.Ships.Single(x => x.ShipId == shipId);
 
-                    return View(graphs);
+                    if (base.CurrentUserIsAllowedAccessToShip(ship.ShipId))
+                    {
+                        int defaultChartRangeBeginTs = DateTime.Today.AddMonths(-1).ToUnixTs();
+                        int defaultChartRangeEndTs = DateTime.Today.ToUnixTs();
+
+                        List<ChartViewModel> defaultCharts = GetCharts(ship.ShipId,
+                                                                        defaultChartRangeBeginTs,
+                                                                        defaultChartRangeEndTs);
+
+                        ViewBag.DefaultChartRangeBeginTs = defaultChartRangeBeginTs;
+                        ViewBag.DefaultChartRangeEndTs = defaultChartRangeEndTs;
+                        ViewBag.ShipName = ship.Name;
+                        ViewBag.ShipId = ship.ShipId;
+                        return View(defaultCharts);
+                    }
+                    else
+                    {
+                        return View("Index");
+                    }
                 }
-                else
+                catch (Exception e)
                 {
                     return View("Index");
                 }
             }
         }
+
+        public List<ChartViewModel> GetCharts(long shipId, int rangeBeginTs, int rangeEndTs)
+        {
+            return _chartHandler.GetDefaultKpiChartViewModels(shipId, rangeBeginTs.FromUnixTs(), rangeEndTs.FromUnixTs());
+        }
+
+        #endregion
+
+
+        #region Ship CRUD
 
         public IActionResult GetCreateShipPanelPartial()
         {
@@ -117,5 +145,7 @@ namespace ThesisPrototype.Controllers
 
             return Index();
         }
+
+        #endregion
     }
 }

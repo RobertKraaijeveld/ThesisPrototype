@@ -6,23 +6,117 @@
 @model List<ChartViewModel>
 
 
-
+@* JS / CSS LIBS WHICH ARE USED ONLY ON THIS PAGE *@
 <script src="~/lib/highcharts/highcharts.js"></script>
+<script src="~/lib/vitalets-datepicker/bootstrap-datepicker.js"></script>
+<link rel="stylesheet" href="~/lib/vitalets-datepicker/datepicker.css" />
 
-@foreach (var chart in @Model)
+
+@* KPI CHART CONTROLS *@
+<div style="margin-bottom: 50px; text-align: center;">
+    <h1>@ViewBag.ShipName - Overview</h1>
+</div>
+
+<div class="card mx-auto" style="width: 40rem; margin-bottom: 40px;">
+  <div class="card-header">
+    Chart controls
+  </div>
+
+  <div class="card-body">
+        <div class="row">
+            <div class="col-xs chartControlInput ">
+                From:
+                <div class="input-append date" id="beginDate" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" id="beginDateInput">
+                    <span class="add-on"><i class="icon-th"></i></span>
+                </div>
+            </div>
+
+            <div class="col-xs chartControlInput ">
+                To:
+                <div class="input-append date" id="endDate" data-date-format="dd-mm-yyyy">
+                    <input class="span2" size="16" type="text" id="endDateInput">
+                    <span class="add-on"><i class="icon-th"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs chartControlInput ">
+                <button id="loadInteractiveChartButton" class="btn btn-light">Reload charts</button>
+                <div class="fa fa-spinner fa-spin" id="loadingSpinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#beginDate').datepicker({
+            startDate: '1-1-2000',
+            endDate: new Date()
+        });
+
+        $('#endDate').datepicker({
+            startDate: '1-1-2000',
+            endDate: new Date()
+        });
+    });
+</script>
+
+
+@* ASYNC CHART RANGE UPDATING JAVASCRIPT *@
+<script type="text/javascript">
+    // setting spinner to be hidden at first
+    $('#loadingSpinner').hide();
+
+    $('#loadInteractiveChartButton').click(function () {
+        $('#loadingSpinner').show();
+
+        var fromDateUnix = Date.parse($('#beginDate').val()) / 1000;
+        var endDateUnix = Date.parse($('#endDate').val()) / 1000;
+
+        $.ajax({
+            url: "/Dashboard/GetCharts?shipId=@ViewBag.ShipId&rangeBeginTs=" + fromDateUnix + "&rangeEndTs=" + endDateUnix,
+            dataType: "json"
+        })
+        .done(function (ret) {
+            for(var i = 0; i < ret.length; i++) {
+                var newChart = ret[i];
+                var existingChart = $('#' + newChart.id).highcharts();
+
+                // Removing existing series
+                while(existingChart.series.length > 0) {
+                    existingChart.series[0].remove(false);
+                }
+
+                // And adding new ones
+                for(var j = 0; j < newChart.series.length; j++) {
+                    var newSerie = newChart.series[j];
+                    existingChart.addSeries(newSerie);
+                }
+
+                existingChart.redraw();
+                $('#loadingSpinner').hide();
+            };
+        });
+    });
+</script>
+
+
+@* KPI CHARTS: DEFAULT VALUES ARE USED AT FIRST *@
+@foreach (var defaultChart in @Model)
 {
-    <div id="@chart.Id"></div>
+    <div id="@defaultChart.Id"></div>
     <script type="text/javascript">
-        Highcharts.chart("@chart.Id", {
+        Highcharts.chart("@defaultChart.Id", {
             chart: {
                 type: 'spline'
             },
-            title: @Html.Raw(Json.Serialize(@chart.title)),
-            series: @Html.Raw(Json.Serialize(@chart.series))
-         });
+            title: @Html.Raw(Json.Serialize(@defaultChart.title)),
+            series: @Html.Raw(Json.Serialize(@defaultChart.series))
+        });
     </script>
 }
-
-
-
 

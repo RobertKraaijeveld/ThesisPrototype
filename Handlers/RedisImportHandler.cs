@@ -9,33 +9,27 @@ using ThesisPrototype.Retrievers;
 
 namespace ThesisPrototype.Handlers
 {
-    public class ImportHandler
+    public class RedisImportHandler
     {
         private readonly static int SENSORVALUES_AMOUNT_PER_IMPORT = 1440;
         private readonly KpiCalculationHandler _kpiCalculationHandler;
-        private readonly SensorValuesRowRetriever _sensorValuesRowRetriever;
-        private readonly KpiValueRetriever _kpiValueRetriever;
 
-        public ImportHandler(KpiCalculationHandler kpiCalculationHandler,
-                             SensorValuesRowRetriever sensorValuesRowRetriever, 
-                             KpiValueRetriever kpiValueRetriever)
+        public RedisImportHandler(KpiCalculationHandler kpiCalculationHandler)
         {
             _kpiCalculationHandler = kpiCalculationHandler;
-            _sensorValuesRowRetriever = sensorValuesRowRetriever;
-            _kpiValueRetriever = kpiValueRetriever;
         }
 
 
         public void Handle(FileStream importFile)
         {
-            var importMetaAndRows = this.SaveImport(importFile);
+            Tuple<DataImportMeta, List<RedisSensorValuesRow>> importMetaAndRows = this.SaveImport(importFile);
             DataImportMeta importMeta = importMetaAndRows.Item1;
-            List<SensorValuesRow> importRows = importMetaAndRows.Item2;
+            List<RedisSensorValuesRow> importRows = importMetaAndRows.Item2;
 
             _kpiCalculationHandler.Handle(importRows, importMeta.ShipId, importMeta.ImportDate);
         }
 
-        private Tuple<DataImportMeta, List<SensorValuesRow>> SaveImport(FileStream importFile)
+        private Tuple<DataImportMeta, List<RedisSensorValuesRow>> SaveImport(FileStream importFile)
         {
             string importFileName = importFile.Name.Split('\\').Last();
             long shipIdOfImport = GetShipIdFromFileName(importFileName);
@@ -43,7 +37,7 @@ namespace ThesisPrototype.Handlers
 
             if (importFile.Length > 0)
             {
-                var rows = new List<SensorValuesRow>();
+                var rows = new List<RedisSensorValuesRow>();
 
                 using (var stream = new StreamReader(importFile))
                 {
@@ -64,7 +58,7 @@ namespace ThesisPrototype.Handlers
                         if(rows.Count < SENSORVALUES_AMOUNT_PER_IMPORT)
                         {
                             Dictionary<ESensor, string> rowAsDict = this.RowToDictionary(header, currentLine);
-                            rows.Add(new SensorValuesRow(shipIdOfImport, dateTimeOfImport, rowAsDict));
+                            rows.Add(new RedisSensorValuesRow(shipIdOfImport, dateTimeOfImport, rowAsDict));
                         }
                         else
                         {
@@ -78,7 +72,7 @@ namespace ThesisPrototype.Handlers
                 var dataImportMeta = new DataImportMeta(shipIdOfImport, dateTimeOfImport);
                 SaveDataImportMeta(dataImportMeta);
 
-                return new Tuple<DataImportMeta, List<SensorValuesRow>>(dataImportMeta, rows);
+                return new Tuple<DataImportMeta, List<RedisSensorValuesRow>>(dataImportMeta, rows);
             }
             else
             {
@@ -86,9 +80,9 @@ namespace ThesisPrototype.Handlers
             }
         }
 
-        private void SaveSensorValues(List<SensorValuesRow> rows)
+        private void SaveSensorValues(List<RedisSensorValuesRow> rows)
         {
-            RedisDatabaseApi.Create<SensorValuesRow>(rows);
+            RedisDatabaseApi.Create<RedisSensorValuesRow>(rows);
         }
 
         private void SaveDataImportMeta(DataImportMeta dataImportMeta)
@@ -122,7 +116,7 @@ namespace ThesisPrototype.Handlers
 
             using(var ctx = new PrototypeContext())
             {
-                return ctx.Ships.Where(x => x.ImoNumber == imo).Single().ShipId;
+                return ctx.Ships.Where(x => x.ImoNumber == imo).First().ShipId;
             }
         }
 

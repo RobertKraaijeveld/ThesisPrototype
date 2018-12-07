@@ -9,10 +9,10 @@ using ThesisPrototype.Utilities;
 namespace ThesisPrototype.DataModels
 {
     // Represents one row of an imported CSV file.
-    public class SensorValuesRow : IRedisModel
+    public class RedisSensorValuesRow : IRedisModel
     {
         [JsonConstructor]
-        public SensorValuesRow(int RowTimeStamp, long ShipId,
+        public RedisSensorValuesRow(int RowTimeStamp, long ShipId,
                                DateTime ImportTimestamp, Dictionary<ESensor, double> SensorValues)
         {
             this.RowTimestamp = RowTimeStamp;
@@ -21,7 +21,7 @@ namespace ThesisPrototype.DataModels
             this.SensorValues = SensorValues;
         }
 
-        public SensorValuesRow(long shipId, DateTime importTimeStamp, 
+        public RedisSensorValuesRow(long shipId, DateTime importTimeStamp, 
                                Dictionary<ESensor, string> rowAsDictionary)
         {
             this.ShipId = shipId;

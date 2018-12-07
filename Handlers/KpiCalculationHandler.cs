@@ -16,9 +16,9 @@ namespace ThesisPrototype.Handlers
         }
 
 
-        public void Handle(List<SensorValuesRow> importedRows, long shipId, DateTime DateOfImport)
+        public void Handle(List<RedisSensorValuesRow> importedRows, long shipId, DateTime DateOfImport)
         {
-            List<KpiValue> KpiValuesToSave = new List<KpiValue>();
+            List<RedisKpiValue> KpiValuesToSave = new List<RedisKpiValue>();
 
             using(var ctx = new PrototypeContext())
             {
@@ -31,7 +31,7 @@ namespace ThesisPrototype.Handlers
                 }
             }
 
-            RedisDatabaseApi.Create<KpiValue>(KpiValuesToSave);
+            RedisDatabaseApi.Create<RedisKpiValue>(KpiValuesToSave);
         }
     }
 }

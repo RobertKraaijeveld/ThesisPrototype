@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
@@ -7,63 +8,55 @@ namespace ThesisPrototype.Seeders
 {
     public static class ShipSeeder
     {
+        private readonly static int AMOUNT_OF_SHIPS_TO_SEED = 35;
+
         public static void SeedShips()
         {
             using (var context = new PrototypeContext())
             {
-                var shipsToBeSeeded = new List<Ship>()
-                {
-                    new Ship
-                    {
-                        UserId = 1,
-                        Name = "Waage",
-                        ImageName = "ship1.jpg",
-                        CountryName = "Germany",
-                        ImoNumber = 1111111
-                    },
-                    new Ship
-                    {
-                        UserId = 2,
-                        Name = "Grüblein",
-                        ImageName = "ship2.jpg",
-                        CountryName = "Germany",
-                        ImoNumber = 1111112
-                    },
-                    new Ship
-                    {
-                        UserId = 3,
-                        Name = "Schlauer Fuchs",
-                        ImageName = "ship3.jpg",
-                        CountryName = "Germany",
-                        ImoNumber = 1111113
-                    },
-                    new Ship
-                    {
-                        UserId = 3,
-                        Name = "Mandritto",
-                        ImageName = "ship4.jpg",
-                        CountryName = "Italy",
-                        ImoNumber = 1111114
-                    },
-                    new Ship
-                    {
-                        UserId = 3,
-                        Name = "Sottani",
-                        ImageName = "ship5.jpg",
-                        CountryName = "Italy",
-                        ImoNumber = 1111115
-                    }
-                };
+                var firstUserId = context.Users.First().UserId;
 
+                var random = new Random();
+                var countryNames = new string[6] { "Nederland", "Deutschland", "United States of America", "United Kingdom", "Italia", "San Marino" };
+                var namesPrefixes = new string[6] { "H.M.S.", "Royal", "Koninklijke", "D.K.M.", "U.S.S.", "I.J.N." };
+                var namesPostfixes = new string[] { "Knuth", "Russell", "Newell", "Stonebraker", "Beck", "Torvalds", "Thompson", "Tukey", "Babbage", "Boole",  "Lovelace", "Cormack", "Neumann", "Codd", "Dijkstra", "Liskov", "Haskell", "Turing", "Curry" };
+                var usedNames = new HashSet<string>();
 
-                foreach (var shipToBeAdded in shipsToBeSeeded)
+                for (int i = 0; i < AMOUNT_OF_SHIPS_TO_SEED; i++)
                 {
-                    if (context.Ships.Any(x => x.ImoNumber == shipToBeAdded.ImoNumber) == false)
+                    var country = countryNames[random.Next(0, countryNames.Length)];
+
+                    var newShip = new Ship()
                     {
-                        context.Ships.Add(shipToBeAdded);
+                        ImoNumber = i,
+                        Name = GetRandomShipName(namesPrefixes, namesPostfixes, random, usedNames),
+                        ImageName = "0.jpg",
+                        CountryName = country,
+                        UserId = firstUserId
+                    };
+
+                    if (context.Ships.Any(x => x.ImoNumber == newShip.ImoNumber) == false)
+                    {
+                        context.Ships.Add(newShip);
                     }
                 }
                 context.SaveChanges();
+            }
+        }
+
+        private static string GetRandomShipName(string[] prefixes, string[] postfixes, 
+                                                Random random, HashSet<string> existingNames)
+        {
+            var randomName = $"{prefixes[random.Next(0, prefixes.Length)]} {postfixes[random.Next(0, postfixes.Length)]}";
+
+            if(existingNames.Contains(randomName))
+            {
+                return GetRandomShipName(prefixes, postfixes, random, existingNames);
+            }
+            else
+            {
+                existingNames.Add(randomName);
+                return randomName;
             }
         }
     }

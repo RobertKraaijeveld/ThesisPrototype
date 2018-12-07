@@ -11,6 +11,6 @@ namespace ThesisPrototype.Calculators
     /// </summary>
     public interface IKpiCalculator
     {
-        KpiValue Calculate(List<SensorValuesRow> sensorValues, DateTime DateOfImport);
+        RedisKpiValue Calculate(List<RedisSensorValuesRow> sensorValues, DateTime DateOfImport);
     }
 }

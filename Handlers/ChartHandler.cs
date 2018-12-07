@@ -9,11 +9,11 @@ using ThesisPrototype.ViewModels;
 
 namespace ThesisPrototype.Handlers
 {
-    public class GraphHandler
+    public class ChartHandler
     {
         private readonly KpiRetriever _kpiRetriever;
         private readonly KpiValueRetriever _kpiValueRetriever;
-        public GraphHandler(KpiRetriever kpiRetriever, KpiValueRetriever kpiValueRetriever)
+        public ChartHandler(KpiRetriever kpiRetriever, KpiValueRetriever kpiValueRetriever)
         {
             _kpiRetriever = kpiRetriever;
             _kpiValueRetriever = kpiValueRetriever;
@@ -25,7 +25,7 @@ namespace ThesisPrototype.Handlers
             // Only taking 5 KPIs per type so that charts dont get too crowded 
             // TODO: FIX THIS
             List<Kpi> averagesKpis = _kpiRetriever.GetKpisByType(EKpiType.Average)
-                                                   .Take(5)
+                                                  .Take(5)
                                                   .ToList();
 
             List<Kpi> combinationsKpis = _kpiRetriever.GetKpisByType(EKpiType.Combination)
@@ -36,9 +36,9 @@ namespace ThesisPrototype.Handlers
                                                   .Take(5)
                                                   .ToList();
 
-            List<List<KpiValue>> averagesKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
-            List<List<KpiValue>> combinationsKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, combinationsKpis, rangeBegin, rangeEnd);
-            List<List<KpiValue>> trendingKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, trendingKpis, rangeBegin, rangeEnd);
+            List<List<RedisKpiValue>> averagesKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
+            List<List<RedisKpiValue>> combinationsKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, combinationsKpis, rangeBegin, rangeEnd);
+            List<List<RedisKpiValue>> trendingKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, trendingKpis, rangeBegin, rangeEnd);
 
             var chartViewModels = new List<ChartViewModel>()
             {
@@ -50,9 +50,9 @@ namespace ThesisPrototype.Handlers
             return chartViewModels;
         }
 
-        private List<List<KpiValue>> GetValuesOfMultipleKpis(long shipId, List<Kpi> kpis, DateTime rangeBegin, DateTime rangeEnd)
+        private List<List<RedisKpiValue>> GetValuesOfMultipleKpis(long shipId, List<Kpi> kpis, DateTime rangeBegin, DateTime rangeEnd)
         {
-            var valuesPerKpi = new List<List<KpiValue>>();
+            var valuesPerKpi = new List<List<RedisKpiValue>>();
 
             foreach (var kpi in kpis)
             {
@@ -62,7 +62,7 @@ namespace ThesisPrototype.Handlers
             return valuesPerKpi;
         }
 
-        private ChartViewModel CreateKpiChartViewModel(string chartId, string titleText, List<List<KpiValue>> kpiValuesPerKpi)
+        private ChartViewModel CreateKpiChartViewModel(string chartId, string titleText, List<List<RedisKpiValue>> kpiValuesPerKpi)
         {
             return new ChartViewModel()
             {
@@ -72,7 +72,7 @@ namespace ThesisPrototype.Handlers
             };
         }
 
-        private ChartSerieViewModel[] CreateSeriesObjects(List<List<KpiValue>> kpiValuesPerKpi)
+        private ChartSerieViewModel[] CreateSeriesObjects(List<List<RedisKpiValue>> kpiValuesPerKpi)
         {
             var chartSerieViewModels = new List<ChartSerieViewModel>();
 
