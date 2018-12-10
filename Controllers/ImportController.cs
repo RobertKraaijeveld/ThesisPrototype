@@ -19,7 +19,7 @@ namespace ThesisPrototype.Controllers
             return View();
         }
 
-        public IActionResult ImportLocalFile(string filePath, bool useEntityFramework = false)
+        public IActionResult ImportLocalFile(string filePath)
         {
             using (var fileStream = System.IO.File.OpenRead(filePath))
             {

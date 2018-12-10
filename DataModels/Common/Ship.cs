@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThesisPrototype.DataModels
 {
+    /// <summary>
+    /// An EF entity representing a single ship.
+    /// </summary>
     public class Ship 
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

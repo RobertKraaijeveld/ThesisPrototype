@@ -10,6 +10,9 @@ namespace ThesisPrototype.Seeders
     {
         private readonly static int AMOUNT_OF_SHIPS_TO_SEED = 35;
 
+        /// <summary>
+        /// Seeds the EF-powered MySQL database with 35 ships.
+        /// </summary>
         public static void SeedShips()
         {
             using (var context = new PrototypeContext())
@@ -28,7 +31,7 @@ namespace ThesisPrototype.Seeders
 
                     var newShip = new Ship()
                     {
-                        ImoNumber = i,
+                        ImoNumber = i + 1, // so IMO matches DB Id: MySQL auto incremented id's start at 1, not 0.
                         Name = GetRandomShipName(namesPrefixes, namesPostfixes, random, usedNames),
                         ImageName = "0.jpg",
                         CountryName = country,

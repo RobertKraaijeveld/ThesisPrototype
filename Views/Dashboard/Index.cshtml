@@ -19,7 +19,7 @@
             <div class="card col-xs shipThumbnail">
                 <img class="card-img-top" src=@Url.Content("~/images/" + @vesselViewModel.ImageName) />
 
-                <h5 class="card-header">@vesselViewModel.ShipName</h5>
+                <h5 class="card-header">@vesselViewModel.ShipName (Imo: @vesselViewModel.ShipImo)</h5>
                 <div class="card-body">
                      @* Make hidden POST form here instead of GET actionlink *@
                     @using (Html.BeginForm("DeleteShip", "Dashboard", FormMethod.Post))

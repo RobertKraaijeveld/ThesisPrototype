@@ -9,7 +9,7 @@ namespace ThesisPrototype.Seeders
     public static class KpiSeeder
     {
         /// <summary>
-        /// Seeds the database with all KPI's.
+        /// Seeds the EF-powered MySQL database with all KPI's.
         /// </summary>
         public static void SeedKpis()
         {

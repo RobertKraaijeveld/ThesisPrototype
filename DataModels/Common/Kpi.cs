@@ -3,6 +3,9 @@ using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.DataModels
 {
+    /// <summary>
+    /// An EF entity representing a Key Performance Indicator. 
+    /// </summary>
     public class Kpi 
     {
         public Kpi(EKpi KpiEnum, EKpiType KpiType)

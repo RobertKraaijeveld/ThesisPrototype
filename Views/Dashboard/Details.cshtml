@@ -8,13 +8,14 @@
 
 @* JS / CSS LIBS WHICH ARE USED ONLY ON THIS PAGE *@
 <script src="~/lib/highcharts/highcharts.js"></script>
+<script src="~/lib/highcharts/boost.js"></script>
 <script src="~/lib/vitalets-datepicker/bootstrap-datepicker.js"></script>
 <link rel="stylesheet" href="~/lib/vitalets-datepicker/datepicker.css" />
 
 
 @* KPI CHART CONTROLS *@
 <div style="margin-bottom: 50px; text-align: center;">
-    <h1>@ViewBag.ShipName - Overview</h1>
+    <h1>@ViewBag.ShipName (Imo: @ViewBag.ShipImo) - Overview</h1>
 </div>
 
 <div class="card mx-auto" style="width: 40rem; margin-bottom: 40px;">
@@ -25,34 +26,45 @@
   <div class="card-body">
         <div class="row">
             <div class="col-xs chartControlInput ">
-                From:
-                <div class="input-append date" id="beginDate" data-date-format="dd-mm-yyyy">
+                <label for="beginDateInput">From:</label>
+                
+                <!-- mm-dd-yyyy because JavaScript does not exactly excell at date parsing, and can only take this format... -->
+                <div class="input-append date" style="margin-bottom: -15px;" id="beginDate" data-date-format="mm-dd-yyyy">
                     <input class="span2" size="16" type="text" id="beginDateInput">
                     <span class="add-on"><i class="icon-th"></i></span>
                 </div>
+                <small class="form-text text-muted">(MM-DD-YYYY)</small>
             </div>
 
             <div class="col-xs chartControlInput ">
-                To:
-                <div class="input-append date" id="endDate" data-date-format="dd-mm-yyyy">
+                <label for="endDateInput">To:</label>
+
+                <!-- mm-dd-yyyy because JavaScript does not exactly excell at date parsing, and can only take this format... -->
+                <div class="input-append date" style="margin-bottom: -15px;" id="endDate" data-date-format="mm-dd-yyyy">
                     <input class="span2" size="16" type="text" id="endDateInput">
                     <span class="add-on"><i class="icon-th"></i></span>
                 </div>
+                <small class="form-text text-muted">(MM-DD-YYYY)</small>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-xs chartControlInput ">
+            <div class="col-xs chartControlInput">
                 <button id="loadInteractiveChartButton" class="btn btn-light">Reload charts</button>
-                <div class="fa fa-spinner fa-spin" id="loadingSpinner"></div>
+            </div>
+        </div>
+
+        <div class="row" >
+            <div id="inputAlert" class="alert alert-danger" style="display: none; margin-top: 20px;" role="alert">
+                <strong>Please enter a valid date.</strong> 
             </div>
         </div>
     </div>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function() {
+        //Setting datepicker starting vals
         $('#beginDate').datepicker({
             startDate: '1-1-2000',
             endDate: new Date()
@@ -62,44 +74,35 @@
             startDate: '1-1-2000',
             endDate: new Date()
         });
-    });
-</script>
+        
+        // (re)load chart click handler
+        $('#loadInteractiveChartButton').click(function () {
+            $('#inputAlert').css({display: "none"});
 
+            // checking inputs
+            if($('#beginDateInput').val() == "" || $('#endDateInput').val() == "")
+            {
+                $('#inputAlert').css({display: "block"});
+            }
+            else
+            {
+                var fromDateUnixMilliTs = Date.parse($('#beginDateInput').val());
+                var endDateUnixMilliTs = Date.parse($('#endDateInput').val());
 
-@* ASYNC CHART RANGE UPDATING JAVASCRIPT *@
-<script type="text/javascript">
-    // setting spinner to be hidden at first
-    $('#loadingSpinner').hide();
-
-    $('#loadInteractiveChartButton').click(function () {
-        $('#loadingSpinner').show();
-
-        var fromDateUnix = Date.parse($('#beginDate').val()) / 1000;
-        var endDateUnix = Date.parse($('#endDate').val()) / 1000;
-
-        $.ajax({
-            url: "/Dashboard/GetCharts?shipId=@ViewBag.ShipId&rangeBeginTs=" + fromDateUnix + "&rangeEndTs=" + endDateUnix,
-            dataType: "json"
-        })
-        .done(function (ret) {
-            for(var i = 0; i < ret.length; i++) {
-                var newChart = ret[i];
-                var existingChart = $('#' + newChart.id).highcharts();
-
-                // Removing existing series
-                while(existingChart.series.length > 0) {
-                    existingChart.series[0].remove(false);
-                }
-
-                // And adding new ones
-                for(var j = 0; j < newChart.series.length; j++) {
-                    var newSerie = newChart.series[j];
-                    existingChart.addSeries(newSerie);
-                }
-
-                existingChart.redraw();
-                $('#loadingSpinner').hide();
-            };
+                $.ajax({
+                    url: "/Dashboard/GetCharts?shipId=@ViewBag.ShipId&rangeBeginTs=" + fromDateUnixMilliTs + "&rangeEndTs=" + endDateUnixMilliTs,
+                    dataType: "json"
+                })
+                .done(function (ret) {
+                    for(var i = 0; i < ret.length; i++) {
+                        var currChartJson = ret[i];
+                        CreateKpiChart(currChartJson.id, 
+                                       'spline', 
+                                       currChartJson.title, 
+                                       currChartJson.series);
+                    };
+                });
+            }
         });
     });
 </script>
@@ -110,13 +113,10 @@
 {
     <div id="@defaultChart.Id"></div>
     <script type="text/javascript">
-        Highcharts.chart("@defaultChart.Id", {
-            chart: {
-                type: 'spline'
-            },
-            title: @Html.Raw(Json.Serialize(@defaultChart.title)),
-            series: @Html.Raw(Json.Serialize(@defaultChart.series))
-        });
+        CreateKpiChart(@defaultChart.Id,
+                       'spline', 
+                       @Html.Raw(Json.Serialize(@defaultChart.title)), 
+                       @Html.Raw(Json.Serialize(@defaultChart.series)));
     </script>
 }
 

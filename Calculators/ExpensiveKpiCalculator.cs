@@ -36,12 +36,10 @@ namespace ThesisPrototype.Calculators
         {
             List<Vector2> smoothedVectors = new List<Vector2>(originalVectors.Count);
             originalVectors.ForEach(v => smoothedVectors.Add(new Vector2(v)));
-            Console.WriteLine("Originalvectors count = " + originalVectors.Count);
-            Console.WriteLine("SmoothedVectors count = " + smoothedVectors.Count);
 
             for (int i = 0; i < originalVectors.Count; i++)
             {
-                int originalVectorX = originalVectors[i].X;
+                long originalVectorX = originalVectors[i].X;
 
                 double smoothedY;
                 if (i > 0) smoothedY = alpha * originalVectors[i].Y + (1.0f - alpha) * smoothedVectors[i - 1].Y;
@@ -54,10 +52,10 @@ namespace ThesisPrototype.Calculators
 
         private struct Vector2
         {
-            public int X;
+            public long X;
             public double Y;
 
-            public Vector2(int X, double Y)
+            public Vector2(long X, double Y)
             {
                 this.X = X;
                 this.Y = Y;

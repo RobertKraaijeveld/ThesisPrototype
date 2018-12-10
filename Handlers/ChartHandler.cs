@@ -9,6 +9,9 @@ using ThesisPrototype.ViewModels;
 
 namespace ThesisPrototype.Handlers
 {
+    /// <summary>
+    /// This class handles the creation of ChartViewModels, which are then displayed on the Razor pages.
+    /// </summary>
     public class ChartHandler
     {
         private readonly KpiRetriever _kpiRetriever;
@@ -19,21 +22,23 @@ namespace ThesisPrototype.Handlers
             _kpiValueRetriever = kpiValueRetriever;
         }
 
-
-        public List<ChartViewModel> GetDefaultKpiChartViewModels(long shipId, DateTime rangeBegin, DateTime rangeEnd)
+        /// <summary>
+        /// Creates a list of chartviewmodels (One chart for each EKpiType) using the KpiValues
+        /// between rangeBegin and rangeEnd, for the ship with the given id.
+        /// </summary>
+        public List<ChartViewModel> GetKpiChartViewModels(long shipId, DateTime rangeBegin, DateTime rangeEnd)
         {
-            // Only taking 5 KPIs per type so that charts dont get too crowded 
-            // TODO: FIX THIS
+            // Only taking 4 KPIs per type so that the charts dont get too crowded 
             List<Kpi> averagesKpis = _kpiRetriever.GetKpisByType(EKpiType.Average)
-                                                  .Take(5)
+                                                  .Take(4)
                                                   .ToList();
 
             List<Kpi> combinationsKpis = _kpiRetriever.GetKpisByType(EKpiType.Combination)
-                                                      .Take(5)
+                                                      .Take(4)
                                                       .ToList();
 
             List<Kpi> trendingKpis = _kpiRetriever.GetKpisByType(EKpiType.Trending)
-                                                  .Take(5)
+                                                  .Take(4)
                                                   .ToList();
 
             List<List<RedisKpiValue>> averagesKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
@@ -56,7 +61,7 @@ namespace ThesisPrototype.Handlers
 
             foreach (var kpi in kpis)
             {
-                valuesPerKpi.Add(_kpiValueRetriever.GetRange(shipId, kpis.Select(x => x.KpiEnum).ToList(),
+                valuesPerKpi.Add(_kpiValueRetriever.GetRange(shipId, new List<EKpi> { kpi.KpiEnum },
                                                              rangeBegin, rangeEnd));
             }
             return valuesPerKpi;
@@ -81,7 +86,7 @@ namespace ThesisPrototype.Handlers
                 chartSerieViewModels.Add(new ChartSerieViewModel()
                 {
                     name = "",
-                    data = kpiValues.Select(v => new ChartDataPointViewModel() { x = v.Date.ToUnixTs(), y = v.Value })
+                    data = kpiValues.Select(v => new ChartDataPointViewModel() { x = v.Date.ToUnixMilliTs(), y = v.Value })
                                 .ToArray()
                 });
             }

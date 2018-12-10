@@ -11,6 +11,10 @@ namespace ThesisPrototype.Calculators
     /// </summary>
     public interface IKpiCalculator
     {
+        /// <summary> 
+        /// Returns a single RedisKpiValue given a list of RedisSensorValuesRows (these rows represent a single import)
+        /// and the DateTime of the import which the RedisSensorValuesRows belong to.!--
+        /// </summary>
         RedisKpiValue Calculate(List<RedisSensorValuesRow> sensorValues, DateTime DateOfImport);
     }
 }

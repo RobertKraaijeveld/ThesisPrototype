@@ -8,10 +8,15 @@ namespace ThesisPrototype.Calculators
 {
     public class KpiCalculatorFactory
     {
+        /// <summary>
+        /// Returns a implementation of IKpiCalculator, given a shipId and a Kpi entity.
+        /// This calculator can then be used to calculate KpiValues.
+        /// </summary>
+
         public IKpiCalculator GetCalculator(long shipId, Kpi kpi)
         {
             // Randomly determining which sensor to use for calculating the KPI's.
-            // Obviosuly, in a 'real' application, a bit more thought is required to determine which KPI uses which sensor.
+            // Obviously, in a 'real' application, a bit more thought is required to determine which KPI uses which sensor.
             var random = new Random();
 
             // possible sensors are: all sensors with the exception of the row timestamp

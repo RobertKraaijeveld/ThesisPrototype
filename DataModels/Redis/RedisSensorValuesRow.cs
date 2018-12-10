@@ -8,12 +8,15 @@ using ThesisPrototype.Utilities;
 
 namespace ThesisPrototype.DataModels
 {
-    // Represents one row of an imported CSV file.
+    /// <summary>
+    /// A model for use in the Redis KV-database, 
+    /// representing a single row of sensor values in a CSV import file.
+    /// </summary>
     public class RedisSensorValuesRow : IRedisModel
     {
         [JsonConstructor]
-        public RedisSensorValuesRow(int RowTimeStamp, long ShipId,
-                               DateTime ImportTimestamp, Dictionary<ESensor, double> SensorValues)
+        public RedisSensorValuesRow(long RowTimeStamp, long ShipId,
+                                    DateTime ImportTimestamp, Dictionary<ESensor, double> SensorValues)
         {
             this.RowTimestamp = RowTimeStamp;
             this.ShipId = ShipId;
@@ -22,21 +25,21 @@ namespace ThesisPrototype.DataModels
         }
 
         public RedisSensorValuesRow(long shipId, DateTime importTimeStamp, 
-                               Dictionary<ESensor, string> rowAsDictionary)
-        {
+                                    Dictionary<ESensor, string> rowAsDictionary)
+        {   
             this.ShipId = shipId;
             this.ImportTimestamp = importTimeStamp;
 
             // Calculating row timestamp
             var timeStampValue = DateTime.Parse(rowAsDictionary[ESensor.ts]);
-            this.RowTimestamp = timeStampValue.ToUnixTs();
+            this.RowTimestamp = timeStampValue.ToUnixMilliTs();
 
             // Parsing all but the timestamp value to double.
             this.SensorValues = rowAsDictionary.Where(kv => !kv.Key.Equals(ESensor.ts))
                                                .ToDictionary(key => key.Key, val => double.Parse(val.Value));
         }
 
-        public int RowTimestamp { get; set; }
+        public long RowTimestamp { get; set; }
 
         public long ShipId { get; set; }
         public DateTime ImportTimestamp { get; set; }

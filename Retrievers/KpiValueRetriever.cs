@@ -9,13 +9,10 @@ namespace ThesisPrototype.Retrievers
 {
     public class KpiValueRetriever
     {
-        public List<RedisKpiValue> Get(long shipId, EKpi kpiEnum, DateTime importDate)
-        {
-            var key = KpiValueKeyFormatter.GetKey(shipId, kpiEnum, importDate);
-
-            return RedisDatabaseApi.Search<RedisKpiValue>(new List<string>() {key});
-        }
-
+        /// <summary>
+        /// Returns the RedisKpiValues for the given KpiEnums which have the given ShipId,
+        /// and whose timestamps are between the given startDate and endDate.
+        /// </summary>
         public List<RedisKpiValue> GetRange(long shipId, List<EKpi> kpiEnums, DateTime startDate, DateTime endDate)
         {
             List<string> keys = new List<string>();

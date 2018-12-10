@@ -73,7 +73,7 @@ namespace ThesisPrototype.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid) // TODO: Handle invalid modelstate by returning errors
+            if (ModelState.IsValid) 
             {
                 var user = new User { UserName = model.Username };
                 var result = await _userManager.CreateAsync(user, model.Password);

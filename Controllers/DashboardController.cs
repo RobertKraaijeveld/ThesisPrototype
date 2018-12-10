@@ -36,6 +36,7 @@ namespace ThesisPrototype.Controllers
                 shipViewModels.Add(new ShipViewModel()
                 {
                     ShipId = ship.ShipId,
+                    ShipImo = ship.ImoNumber,
                     ShipName = ship.Name,
                     ImageName = ship.ImageName
                 });
@@ -52,12 +53,13 @@ namespace ThesisPrototype.Controllers
             {
                 try
                 {
-                    Ship ship = context.Ships.Single(x => x.ShipId == shipId);
-
-                    if (base.CurrentUserIsAllowedAccessToShip(ship.ShipId))
+                    if (context.Ships.Any(x => x.ShipId == shipId) && 
+                        base.CurrentUserIsAllowedAccessToShip(shipId))
                     {
-                        int defaultChartRangeBeginTs = DateTime.Today.AddMonths(-1).ToUnixTs();
-                        int defaultChartRangeEndTs = DateTime.Today.ToUnixTs();
+                        Ship ship = context.Ships.Single(x => x.ShipId == shipId);
+
+                        long defaultChartRangeBeginTs = DateTime.Today.AddMonths(-1).ToUnixMilliTs();
+                        long defaultChartRangeEndTs = DateTime.Today.ToUnixMilliTs();
 
                         List<ChartViewModel> defaultCharts = GetCharts(ship.ShipId,
                                                                         defaultChartRangeBeginTs,
@@ -66,24 +68,25 @@ namespace ThesisPrototype.Controllers
                         ViewBag.DefaultChartRangeBeginTs = defaultChartRangeBeginTs;
                         ViewBag.DefaultChartRangeEndTs = defaultChartRangeEndTs;
                         ViewBag.ShipName = ship.Name;
+                        ViewBag.ShipImo = ship.ImoNumber;
                         ViewBag.ShipId = ship.ShipId;
                         return View(defaultCharts);
                     }
                     else
                     {
-                        return View("Index");
+                        return Index();
                     }
                 }
                 catch (Exception e)
                 {
-                    return View("Index");
+                    return Index();
                 }
             }
         }
 
-        public List<ChartViewModel> GetCharts(long shipId, int rangeBeginTs, int rangeEndTs)
+        public List<ChartViewModel> GetCharts(long shipId, long rangeBeginTs, long rangeEndTs)
         {
-            return _chartHandler.GetDefaultKpiChartViewModels(shipId, rangeBeginTs.FromUnixTs(), rangeEndTs.FromUnixTs());
+            return _chartHandler.GetKpiChartViewModels(shipId, rangeBeginTs.FromUnixMilliTs(), rangeEndTs.FromUnixMilliTs());
         }
 
         #endregion
@@ -114,7 +117,6 @@ namespace ThesisPrototype.Controllers
                         UserId = shipsUser.UserId
                     });
                     context.SaveChanges();
-
                 }
             }
             catch (Exception e)

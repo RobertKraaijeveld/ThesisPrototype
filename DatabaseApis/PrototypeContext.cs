@@ -4,6 +4,10 @@ using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype.DatabaseApis
 {
+    /// <summary>
+    /// The context implementation used for calls to the Entity Framework. 
+    /// Inherits from IdentityDbContext, which provides the DbSet for the 'User' entity.
+    /// </summary>
     public class PrototypeContext : IdentityDbContext<User>
     {
         public DbSet<Ship> Ships { get; set; }

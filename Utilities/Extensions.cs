@@ -6,6 +6,9 @@ namespace ThesisPrototype.Utilities
 {
     public static class Extensions
     {
+        /// <summary>
+        /// Splits a IEnumerable<T> into a new list of lists, with each list containing <size> T's.
+        /// </summary>
         public static List<List<T>> Split<T>(this IEnumerable<T> collection, int size)
         {
             var chunks = new List<List<T>>();
@@ -27,19 +30,6 @@ namespace ThesisPrototype.Utilities
             return chunks;
         }
 
-        public static T ToObject<T>(this IDictionary<String, Object> dictionary) where T: class
-        {  
-            var expandoObj = new ExpandoObject();  
-            var expandoObjCollection = (ICollection<KeyValuePair<String, Object>>)expandoObj;  
-  
-            foreach (var keyValuePair in dictionary)  
-            {  
-                expandoObjCollection.Add(keyValuePair);  
-            }  
-            dynamic eoDynamic = expandoObj;  
-            return eoDynamic as T;  
-        }
-
         /// <summary>
         /// Gets the 00:00:00 instance of a DateTime
         /// </summary>
@@ -56,14 +46,20 @@ namespace ThesisPrototype.Utilities
             return AbsoluteStart(dateTime).AddDays(1).AddTicks(-1);
         }
 
-        public static int ToUnixTs(this DateTime dt)
+        /// <summary>
+        /// Converts a DateTime to the amount of milliseconds passed since January the first, 1970.
+        /// </summary>
+        public static long ToUnixMilliTs(this DateTime dt)
         {
-            return (Int32)(dt.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            return (Int64)(dt.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
         }
 
-        public static DateTime FromUnixTs(this int unixTs)
+        /// <summary>
+        /// Converts the given amount of milliseconds passed since January the first, 1970 to a DateTime.
+        /// </summary>
+        public static DateTime FromUnixMilliTs(this long unixTs)
         {
-            return new DateTime(1970, 1, 1).AddSeconds(unixTs);
+            return new DateTime(1970, 1, 1).AddMilliseconds(unixTs); 
         }
     }
 }

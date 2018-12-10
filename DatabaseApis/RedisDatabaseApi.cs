@@ -10,6 +10,9 @@ using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype.DatabaseApis
 {
+    /// <summary>
+    /// A simple API for accessing the Redis KV-store, using the StackExchange Redis driver.
+    /// </summary>
     public static class RedisDatabaseApi
     {
         private static readonly string _connectionString;
@@ -21,13 +24,12 @@ namespace ThesisPrototype.DatabaseApis
         {
             _connectionString = GetConnectionString();
             _connectionMultiplexer = ConnectionMultiplexer.Connect(_connectionString);
+            _databaseConnection = _connectionMultiplexer.GetDatabase();
         }
         
 
         public static List<M> Search<M>(List<string> keys) where M: IRedisModel
         {
-            OpenConnection();
-
             var taskList = new List<Task<RedisValue>>();
             var readBatch = _databaseConnection.CreateBatch();
 
@@ -38,7 +40,6 @@ namespace ThesisPrototype.DatabaseApis
             }
         
             readBatch.Execute();
-            CloseConnection();
 
             var returnValues = new List<M>();
             foreach (var completedReadTask in taskList)
@@ -55,20 +56,17 @@ namespace ThesisPrototype.DatabaseApis
 
         public static void Create<M>(List<M> newModels) where M : IRedisModel
         {
-            OpenConnection();
-
             List<Task> creationTasks = new List<Task>();
 
             foreach (var model in newModels)
             {
                 var modelAsJson = JsonConvert.SerializeObject(model);
-                var createModelTask = _databaseConnection.ExecuteAsync("SET", new string[2] { model.ToRedisKey(), modelAsJson });
+                Task<RedisResult> createModelTask = _databaseConnection.ExecuteAsync("SET", new string[2] { model.ToRedisKey(), modelAsJson });
 
                 creationTasks.Add(createModelTask);
             }
 
             Task.WaitAll(creationTasks.ToArray());
-            CloseConnection();
         }
 
         public static void Update<M>(List<M> updatedValues) where M : IRedisModel
@@ -79,8 +77,6 @@ namespace ThesisPrototype.DatabaseApis
 
         public static void Delete<M>(List<string> keys) where M : IRedisModel
         {
-            OpenConnection();
-
             List<Task> deletionTasks = new List<Task>();
 
             foreach (var key in keys)
@@ -94,19 +90,6 @@ namespace ThesisPrototype.DatabaseApis
             }
 
             Task.WaitAll(deletionTasks.ToArray());
-            CloseConnection();
-        }
-
-        public static void TruncateAll()
-        {
-            using (var adminConnection = ConnectionMultiplexer.Connect($"{_connectionString},allowAdmin=true"))
-            {
-                var endpoints = adminConnection.GetEndPoints();
-                var masterServers = endpoints.Select(x => adminConnection.GetServer(x))
-                                             .Where(x => !x.IsSlave)
-                                             .ToList();
-                masterServers.ForEach(x => x.FlushDatabase());
-            }
         }
 
 
@@ -124,16 +107,6 @@ namespace ThesisPrototype.DatabaseApis
 
             IConfigurationRoot configuration = builder.Build();
             return configuration.GetSection("DatabaseConfiguration")["RedisConnectionString"];
-        }
-
-        private static void OpenConnection()
-        {
-            _databaseConnection = _connectionMultiplexer.GetDatabase();
-        }
-
-        private static void CloseConnection()
-        {
-            _databaseConnection = null;
         }
     }
 }

@@ -15,7 +15,11 @@ namespace ThesisPrototype.Handlers
             _kpiCalculatorFactory = kpiCalculatorFactory;
         }
 
-
+        /// <summary>
+        /// Calculates the KpiValue for each Kpi and saves them to the Redis DB using the Redis API for the given
+        /// RedisSensorValuesRows. Makes use of the KpiCalculatorFactory in order to get the appropriate KpiCalculator.
+        /// The DateOfImport and shipId parameters are used for the creation of the Redis keys for each KpiValue.
+        /// </summary>
         public void Handle(List<RedisSensorValuesRow> importedRows, long shipId, DateTime DateOfImport)
         {
             List<RedisKpiValue> KpiValuesToSave = new List<RedisKpiValue>();

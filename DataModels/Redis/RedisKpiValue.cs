@@ -3,6 +3,10 @@ using ThesisPrototype.RedisKeyFormatters;
 
 namespace ThesisPrototype.DataModels
 {
+    /// <summary>
+    /// A model for use in the Redis KV-database, 
+    /// representing a single KpiValue for a given day / ship combination.
+    /// </summary>
     public class RedisKpiValue : IRedisModel
     {
         public RedisKpiValue(long shipId, Kpi kpi, double value, DateTime date)

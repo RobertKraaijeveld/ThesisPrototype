@@ -8,6 +8,10 @@ using ThesisPrototype.DataModels;
 
 namespace ThesisPrototype.Controllers
 {
+    /// <summary>
+    /// This is the parent of all other controllers within this project, 
+    /// providing them with some usefull utility methods.
+    /// </summary>
     public class BaseController : Controller
     {
         public readonly UserManager<User> _userManager;
