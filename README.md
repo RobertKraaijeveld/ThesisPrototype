@@ -20,4 +20,5 @@ Steps for running this application
 3. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
 4. cd back to the root directory of the project.
 5. > dotnet restore
-5. > dotnet run
+6. > dotnet ef database update
+7. > dotnet run
