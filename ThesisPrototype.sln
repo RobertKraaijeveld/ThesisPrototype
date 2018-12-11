@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2011
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThesisPrototype", "ThesisPrototype.csproj", "{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportFileCreator", "ImportFileCreator\ImportFileCreator.csproj", "{ECD21E0C-4174-4615-BC39-ECD9EF46EEB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrototypeStressTester", "..\PrototypeStressTester\PrototypeStressTester.csproj", "{D441C66A-C023-4792-AC74-499A0DD90CE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThesisPrototype", "ThesisPrototype\ThesisPrototype.csproj", "{E9674FAF-C8BC-439D-8916-2B1E23E3D170}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F01F6B1-8B4F-4B63-AF1A-DB108C08FE91}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D441C66A-C023-4792-AC74-499A0DD90CE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECD21E0C-4174-4615-BC39-ECD9EF46EEB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECD21E0C-4174-4615-BC39-ECD9EF46EEB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECD21E0C-4174-4615-BC39-ECD9EF46EEB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECD21E0C-4174-4615-BC39-ECD9EF46EEB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9674FAF-C8BC-439D-8916-2B1E23E3D170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9674FAF-C8BC-439D-8916-2B1E23E3D170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9674FAF-C8BC-439D-8916-2B1E23E3D170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9674FAF-C8BC-439D-8916-2B1E23E3D170}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14687,11 +14687,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype.csproj",
+      "projectUniqueName": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\ThesisPrototype.csproj",
       "projectName": "ThesisPrototype",
-      "projectPath": "c:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype.csproj",
+      "projectPath": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\ThesisPrototype.csproj",
       "packagesPath": "C:\\Users\\kraaijeveld\\.nuget\\packages\\",
-      "outputPath": "c:\\Projects\\Afstudeerprototype\\ThesisPrototype\\obj\\",
+      "outputPath": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
