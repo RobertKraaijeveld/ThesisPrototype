@@ -15,6 +15,7 @@ Pre-requisites
 
 Steps for running this application
 -----------------------------------------
+0. Clone using > git clone --recurse-submodules https://github.com/robertkraaijeveld/thesisprototype
 1. > ./ThesisPrototype/Scripts/start-redis.sh create
 2. Edit the value of "RedisConnectionString" in appsettings.json to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
 3. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
