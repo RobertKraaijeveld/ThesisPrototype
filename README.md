@@ -15,7 +15,7 @@ Pre-requisites
 
 Steps for running this application
 -----------------------------------------
-1. > ./Scripts/start-redis.sh create
+1. > ./ThesisPrototype/Scripts/start-redis.sh create
 2. Edit the value of "RedisConnectionString" to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
 3. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
 4. cd back to the root directory of the project.
