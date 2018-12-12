@@ -17,9 +17,9 @@ namespace ThesisPrototype.Controllers
     [Authorize]
     public class DashboardController : BaseController
     {
-        private readonly ChartHandler _chartHandler;
+        private readonly ChartRetriever _chartHandler;
 
-        public DashboardController(ChartHandler chartHandler,
+        public DashboardController(ChartRetriever chartHandler,
                                    UserManager<User> userManager) : base(userManager)
         {
             _chartHandler = chartHandler;
@@ -86,7 +86,7 @@ namespace ThesisPrototype.Controllers
 
         public List<ChartViewModel> GetCharts(long shipId, long rangeBeginTs, long rangeEndTs)
         {
-            return _chartHandler.GetKpiChartViewModels(shipId, rangeBeginTs.FromUnixMilliTs(), rangeEndTs.FromUnixMilliTs());
+            return _chartHandler.GetChartViewModels(shipId, rangeBeginTs.FromUnixMilliTs(), rangeEndTs.FromUnixMilliTs());
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Enums;
 using ThesisPrototype.Retrievers;
@@ -26,7 +27,7 @@ namespace ThesisPrototype.Handlers
         /// Creates a list of chartviewmodels (One chart for each EKpiType) using the KpiValues
         /// between rangeBegin and rangeEnd, for the ship with the given id.
         /// </summary>
-        public List<ChartViewModel> GetKpiChartViewModels(long shipId, DateTime rangeBegin, DateTime rangeEnd)
+        public List<ChartViewModel> GetChartViewModels(long shipId, DateTime rangeBegin, DateTime rangeEnd)
         {
             // Only taking 4 KPIs per type so that the charts dont get too crowded 
             List<Kpi> averagesKpis = _kpiRetriever.GetKpisByType(EKpiType.Average)
@@ -40,6 +41,8 @@ namespace ThesisPrototype.Handlers
             List<Kpi> trendingKpis = _kpiRetriever.GetKpisByType(EKpiType.Trending)
                                                   .Take(4)
                                                   .ToList();
+            
+            List<ESensor> sensors = new List<ESensor>() { ESensor.sensor1, ESensor.sensor2, ESensor.sensor3, ESensor.sensor4 };
 
             List<List<RedisKpiValue>> averagesKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, averagesKpis, rangeBegin, rangeEnd);
             List<List<RedisKpiValue>> combinationsKpiValuesPerKpi = GetValuesOfMultipleKpis(shipId, combinationsKpis, rangeBegin, rangeEnd);
@@ -47,13 +50,21 @@ namespace ThesisPrototype.Handlers
 
             var chartViewModels = new List<ChartViewModel>()
             {
-                CreateKpiChartViewModel("avg_kpis", "Averages KPIs", averagesKpiValuesPerKpi),
-                CreateKpiChartViewModel("combo_kpis", "Combination KPIs", combinationsKpiValuesPerKpi),
-                CreateKpiChartViewModel("trending_kpis", "Trending KPIs", trendingKpiValuesPerKpi),
+                CreateChartViewModel("avg_kpis", "Averages KPIs", CreateKpiSeriesViewModels(averagesKpiValuesPerKpi)),
+                CreateChartViewModel("combo_kpis", "Combination KPIs", CreateKpiSeriesViewModels(combinationsKpiValuesPerKpi)),
+                CreateChartViewModel("trending_kpis", "Trending KPIs", CreateKpiSeriesViewModels(trendingKpiValuesPerKpi)),
+
+                // Redis sensor values chart
+
+                // EF sensor values chart
+                CreateChartViewModel("ef_sensorvalues", "Sensor Values (Retrieved by EF)", 
+                                     CreateEntityFrameworkSensorValuesSeries(shipId, sensors, rangeBegin, rangeEnd))
             };
 
             return chartViewModels;
         }
+
+
 
         private List<List<RedisKpiValue>> GetValuesOfMultipleKpis(long shipId, List<Kpi> kpis, DateTime rangeBegin, DateTime rangeEnd)
         {
@@ -67,14 +78,49 @@ namespace ThesisPrototype.Handlers
             return valuesPerKpi;
         }
 
-        private ChartViewModel CreateKpiChartViewModel(string chartId, string titleText, List<List<RedisKpiValue>> kpiValuesPerKpi)
+        private ChartViewModel CreateChartViewModel(string chartId, string titleText, ChartSerieViewModel[] serieViewModels)
         {
             return new ChartViewModel()
             {
                 Id = chartId,
                 title = new ChartTitleViewModel() { text = titleText },
-                series = CreateSeriesObjects(kpiValuesPerKpi)
+                series = serieViewModels
             };
+        }
+
+        // private ChartSerieViewModel[] CreateRedisSensorValuesSeries(long shipId, List<ESensor> sensors, DateTime rangeBegin, DateTime rangeEnd)
+        // {
+
+        // }
+
+        private ChartSerieViewModel[] CreateEntityFrameworkSensorValuesSeries(long shipId, List<ESensor> sensors, DateTime rangeBegin, DateTime rangeEnd)
+        {
+            using(var context = new PrototypeContext())
+            {
+                ChartSerieViewModel[] series = new ChartSerieViewModel[sensors.Count];            
+                for(int i = 0; i < series.Length; i++)
+                {
+                    var sensor = sensors[i];
+                    var sensorValues = context.SensorValuesRows.Where(x => x.ShipId == shipId 
+                                                                        && x.ImportTimestamp >= rangeBegin 
+                                                                        && x.ImportTimestamp <= rangeEnd)
+                                                               .ToList(); 
+
+                    var sensorValuesAsChartDataPoints = sensorValues.Select(sv => new ChartDataPointViewModel(){
+                        x = sv.RowTimestamp, y = sv.GetValue(sensor)
+                    });
+
+                    var serieForThisSensor = new ChartSerieViewModel() { name = sensor.ToString(), data = sensorValuesAsChartDataPoints.ToArray() };
+                    series[i] = serieForThisSensor;
+                }
+
+                return series;
+            }
+        }
+
+        private ChartSerieViewModel[] CreateKpiSeriesViewModels(List<List<RedisKpiValue>> kpiValuesPerKpi)
+        {
+            return CreateSeriesObjects(kpiValuesPerKpi);
         }
 
         private ChartSerieViewModel[] CreateSeriesObjects(List<List<RedisKpiValue>> kpiValuesPerKpi)

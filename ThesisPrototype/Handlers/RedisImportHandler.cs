@@ -9,9 +9,8 @@ using ThesisPrototype.Retrievers;
 
 namespace ThesisPrototype.Handlers
 {
-    public class RedisImportHandler
+    public class RedisImportHandler : AbstractImportHandler
     {
-        private readonly static int SENSORVALUES_AMOUNT_PER_IMPORT = 1440;
         private readonly KpiCalculationHandler _kpiCalculationHandler;
 
         public RedisImportHandler(KpiCalculationHandler kpiCalculationHandler)
@@ -25,7 +24,7 @@ namespace ThesisPrototype.Handlers
         /// It then creates a DataImportMeta object and a list of RedisSensorValuesRow objects, 
         /// saves the RedisSensorValuesRow to the redis KV-store, and calls the KpiCalculationHandler.Handle subroutine.
         /// </summary>
-        public void Handle(FileStream importFile)
+        public override void Handle(FileStream importFile)
         {
             Tuple<DataImportMeta, List<RedisSensorValuesRow>> importMetaAndRows = this.SaveImport(importFile);
             DataImportMeta importMeta = importMetaAndRows.Item1;
@@ -88,52 +87,6 @@ namespace ThesisPrototype.Handlers
         private void SaveSensorValues(List<RedisSensorValuesRow> rows)
         {
             RedisDatabaseApi.Create<RedisSensorValuesRow>(rows);
-        }
-
-        private void SaveDataImportMeta(DataImportMeta dataImportMeta)
-        {
-            using(var context = new PrototypeContext())
-            {
-                context.DataImportMetas.Add(dataImportMeta);
-                context.SaveChanges();
-            }
-        }
-
-        private Dictionary<ESensor, string> RowToDictionary(string header, string row)
-        {
-            var headerAsArray = header.Split(',');
-            var rowAsArray = row.Split(',');
-
-            var returnDictionary = new Dictionary<ESensor, string>();
-            for (int i = 0; i < headerAsArray.Length; i++)
-            {
-                var sensorNameAsEnum = (ESensor)Enum.Parse(typeof(ESensor), headerAsArray[i]);
-                returnDictionary.Add(sensorNameAsEnum, rowAsArray[i]);
-            }
-
-            return returnDictionary;
-        }
-
-        private long GetShipIdFromFileName(string fileName)
-        {
-            // filename is like 1111111_20180604_030000.csv. First 7 numbers are imo
-            var imo = int.Parse(fileName.Split('_')[0]);
-
-            using(var ctx = new PrototypeContext())
-            {
-                return ctx.Ships.Where(x => x.ImoNumber == imo).First().ShipId;
-            }
-        }
-
-        private DateTime GetImportDateFromFileName(string fileName)
-        {
-            // filename is like 1111111_20180604_030000.csv. Second set of numbers is import datetime
-            var dateTimeNrs = fileName.Split('_')[1];
-            var yearStr = new string(dateTimeNrs.Take(4).ToArray());
-            var monthStr = new string(dateTimeNrs.Skip(4).Take(2).ToArray());
-            var dayStr = new string(dateTimeNrs.Skip(6).Take(2).ToArray());
-
-            return new DateTime(int.Parse(yearStr), int.Parse(monthStr), int.Parse(dayStr));
         }
     }
 }

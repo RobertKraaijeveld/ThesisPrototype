@@ -13,6 +13,9 @@ namespace ThesisPrototype.DatabaseApis
         public DbSet<Ship> Ships { get; set; }
         public DbSet<DataImportMeta> DataImportMetas { get; set; }
         public DbSet<Kpi> Kpis { get; set; } 
+        public DbSet<EfKpiValue> KpiValues { get; set; } 
+        public DbSet<EfSensorValuesRow> SensorValuesRows { get; set; } 
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -25,6 +28,11 @@ namespace ThesisPrototype.DatabaseApis
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Ship>().HasOne<User>(x => x.User);
+            
+            modelBuilder.Entity<EfKpiValue>().HasOne<Kpi>(x => x.Kpi);
+            modelBuilder.Entity<EfKpiValue>().HasOne<Ship>(x => x.Ship);
+
+            modelBuilder.Entity<EfSensorValuesRow>().HasOne<Ship>(x => x.Ship);
         }
     }
 }
