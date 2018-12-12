@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using MessagePack;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using ThesisPrototype.DataModels;
+using ThesisPrototype.Utilities;
 
 namespace ThesisPrototype.DatabaseApis
 {
@@ -46,7 +50,7 @@ namespace ThesisPrototype.DatabaseApis
             {
                 if(completedReadTask.Result != RedisValue.Null)
                 {
-                    var deserializedResult = JsonConvert.DeserializeObject<M>(completedReadTask.Result);
+                    var deserializedResult = MessagePackSerializer.Deserialize<M>(completedReadTask.Result);
                     returnValues.Add(deserializedResult);
                 }
             }
@@ -60,9 +64,7 @@ namespace ThesisPrototype.DatabaseApis
 
             foreach (var model in newModels)
             {
-                var modelAsJson = JsonConvert.SerializeObject(model);
-                Task<RedisResult> createModelTask = _databaseConnection.ExecuteAsync("SET", new string[2] { model.ToRedisKey(), modelAsJson });
-
+                Task<RedisResult> createModelTask = _databaseConnection.ExecuteAsync("SET", new object[2] { model.ToRedisKey(), MessagePackSerializer.Serialize(model) });
                 creationTasks.Add(createModelTask);
             }
 
@@ -92,6 +94,14 @@ namespace ThesisPrototype.DatabaseApis
             Task.WaitAll(deletionTasks.ToArray());
         }
 
+        private static T Deserialize<T>(byte[] param)
+        {
+            using (MemoryStream ms = new MemoryStream(param))
+            {
+                IFormatter br = new BinaryFormatter();
+                return (T)br.Deserialize(ms);
+            }
+        }
 
         private static Tuple<string, string[]> SeparateCmdAndArguments(string cmdString)
         {

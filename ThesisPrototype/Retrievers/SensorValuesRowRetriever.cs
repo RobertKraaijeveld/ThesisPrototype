@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.RedisKeyFormatters;
@@ -12,16 +13,15 @@ namespace ThesisPrototype.Retrievers
         /// Returns the RedisSensorValuesRows for the ship with the given ShipId,
         /// and whose timestamps are between the given Unix timestamps (in milliseconds since Jan 1, 1970).
         /// </summary>
-        public List<RedisSensorValuesRow> GetRange(long shipId, int startMinuteUnixMilliTs, int endMinuteUnixMilliTs)
+        public List<RedisSensorValuesRow> GetRange(long shipId, long startMinuteUnixMilliTs, long endMinuteUnixMilliTs)
         {
-            var dtBegin = DateTimeOffset.FromUnixTimeSeconds(startMinuteUnixMilliTs);
-            var dtEnd = DateTimeOffset.FromUnixTimeSeconds(endMinuteUnixMilliTs);
-
             List<string> keys = new List<string>();
 
-            for (var currMinute = dtBegin; currMinute < dtEnd; currMinute = currMinute.AddMinutes(1))
+            for (long currMinuteInUnixMillis = startMinuteUnixMilliTs;
+                 currMinuteInUnixMillis < endMinuteUnixMilliTs;
+                 currMinuteInUnixMillis += 60000)
             {
-                keys.Add(SensorValuesRowKeyFormatter.GetKey(shipId, (Int32) currMinute.ToUnixTimeSeconds()));
+                keys.Add(SensorValuesRowKeyFormatter.GetKey(shipId, currMinuteInUnixMillis)); 
             }
 
             return RedisDatabaseApi.Search<RedisSensorValuesRow>(keys);

@@ -21,7 +21,7 @@ namespace ThesisPrototype.Seeders
 
                 var random = new Random();
                 var countryNames = new string[6] { "Nederland", "Deutschland", "United States of America", "United Kingdom", "Italia", "San Marino" };
-                var namesPrefixes = new string[6] { "H.M.S.", "Royal", "Koninklijke", "D.K.M.", "U.S.S.", "I.J.N." };
+                var namesPrefixes = new string[6] { "H.M.S.", "H.N.L.M.S.", "F.S.", "F.G.S.", "U.S.S.", "I.J.N." };
                 var namesPostfixes = new string[] { "Knuth", "Russell", "Newell", "Stonebraker", "Beck", "Torvalds", "Thompson", "Tukey", "Babbage", "Boole",  "Lovelace", "Cormack", "Neumann", "Codd", "Dijkstra", "Liskov", "Haskell", "Turing", "Curry" };
                 var usedNames = new HashSet<string>();
 
@@ -31,14 +31,15 @@ namespace ThesisPrototype.Seeders
 
                     var newShip = new Ship()
                     {
-                        ImoNumber = i + 1, // so IMO matches DB Id: MySQL auto incremented id's start at 1, not 0.
+                        ShipId = i + 1,
+                        ImoNumber = i + 1, 
                         Name = GetRandomShipName(namesPrefixes, namesPostfixes, random, usedNames),
                         ImageName = "0.jpg",
                         CountryName = country,
                         UserId = firstUserId
                     };
 
-                    if (context.Ships.Any(x => x.ImoNumber == newShip.ImoNumber) == false)
+                    if (context.Ships.Any(x => x.ShipId == newShip.ShipId) == false)
                     {
                         context.Ships.Add(newShip);
                     }

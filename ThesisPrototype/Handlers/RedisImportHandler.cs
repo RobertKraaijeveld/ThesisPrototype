@@ -24,7 +24,7 @@ namespace ThesisPrototype.Handlers
         /// It then creates a DataImportMeta object and a list of RedisSensorValuesRow objects, 
         /// saves the RedisSensorValuesRow to the redis KV-store, and calls the KpiCalculationHandler.Handle subroutine.
         /// </summary>
-        public override void Handle(FileStream importFile)
+        public override void Handle(FileStream importFile, bool calculateKpis = true)
         {
             Tuple<DataImportMeta, List<RedisSensorValuesRow>> importMetaAndRows = this.SaveImport(importFile);
             DataImportMeta importMeta = importMetaAndRows.Item1;

@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v2.1": {
       "ThesisPrototype/1.0.0": {
         "dependencies": {
+          "MessagePack": "1.7.3.4",
           "Microsoft.AspNetCore.All": "2.1.6",
           "Microsoft.AspNetCore.Authentication.Cookies": "2.1.2",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "2.1.6",

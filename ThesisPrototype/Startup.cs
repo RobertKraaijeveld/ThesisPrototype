@@ -52,6 +52,7 @@ namespace ThesisPrototype
 
             // Adding custom services
             services.AddSingleton(typeof(RedisImportHandler), typeof(RedisImportHandler));
+            services.AddSingleton(typeof(EntityFrameworkImportHandler), typeof(EntityFrameworkImportHandler));
 
             services.AddSingleton(typeof(KpiCalculatorFactory), typeof(KpiCalculatorFactory));
             services.AddSingleton(typeof(KpiCalculationHandler), typeof(KpiCalculationHandler));

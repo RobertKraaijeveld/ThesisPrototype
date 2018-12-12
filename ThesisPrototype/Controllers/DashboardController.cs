@@ -58,7 +58,7 @@ namespace ThesisPrototype.Controllers
                     {
                         Ship ship = context.Ships.Single(x => x.ShipId == shipId);
 
-                        long defaultChartRangeBeginTs = DateTime.Today.AddMonths(-1).ToUnixMilliTs();
+                        long defaultChartRangeBeginTs = DateTime.Today.AddMonths(-2).ToUnixMilliTs();
                         long defaultChartRangeEndTs = DateTime.Today.ToUnixMilliTs();
 
                         List<ChartViewModel> defaultCharts = GetCharts(ship.ShipId,
@@ -86,7 +86,7 @@ namespace ThesisPrototype.Controllers
 
         public List<ChartViewModel> GetCharts(long shipId, long rangeBeginTs, long rangeEndTs)
         {
-            return _chartHandler.GetChartViewModels(shipId, rangeBeginTs.FromUnixMilliTs(), rangeEndTs.FromUnixMilliTs());
+            return _chartHandler.GetDefaultKpiChartViewModels(shipId, rangeBeginTs.FromUnixMilliTs(), rangeEndTs.FromUnixMilliTs());
         }
 
         #endregion

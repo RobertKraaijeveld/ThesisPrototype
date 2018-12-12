@@ -1,10 +1,14 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using ThesisPrototype.Enums;
 
 namespace ThesisPrototype.DataModels
 {
     public class EfSensorValuesRow
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long EfSensorValuesRowId { get; set; }
+
         public DateTime ImportTimestamp { get; set; }
         public long RowTimestamp { get; set; }
         public Ship Ship { get; set; }

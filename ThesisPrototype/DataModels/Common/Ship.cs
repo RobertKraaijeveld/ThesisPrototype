@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThesisPrototype.DataModels
@@ -7,7 +8,7 @@ namespace ThesisPrototype.DataModels
     /// </summary>
     public class Ship 
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long ShipId { get; set; }
 
         public string Name { get; set; }

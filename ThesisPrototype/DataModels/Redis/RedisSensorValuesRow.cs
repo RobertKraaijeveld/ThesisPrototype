@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using MessagePack;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using ThesisPrototype.Enums;
 using ThesisPrototype.RedisKeyFormatters;
@@ -12,16 +15,17 @@ namespace ThesisPrototype.DataModels
     /// A model for use in the Redis KV-database, 
     /// representing a single row of sensor values in a CSV import file.
     /// </summary>
+    [MessagePackObject]
     public class RedisSensorValuesRow : IRedisModel
     {
-        [JsonConstructor]
-        public RedisSensorValuesRow(long RowTimeStamp, long ShipId,
-                                    DateTime ImportTimestamp, Dictionary<ESensor, double> SensorValues)
+        [SerializationConstructor]
+        public RedisSensorValuesRow(long shipId, long RowTimestamp,
+                                    DateTime ImportTimestamp, Dictionary<ESensor, double> sensorValues)
         {
-            this.RowTimestamp = RowTimeStamp;
-            this.ShipId = ShipId;
+            this.RowTimestamp = RowTimestamp;
+            this.ShipId = shipId;
             this.ImportTimestamp = ImportTimestamp;
-            this.SensorValues = SensorValues;
+            this.SensorValues = sensorValues;
         }
 
         public RedisSensorValuesRow(long shipId, DateTime importTimeStamp, 
@@ -39,10 +43,13 @@ namespace ThesisPrototype.DataModels
                                                .ToDictionary(key => key.Key, val => double.Parse(val.Value));
         }
 
+        [Key(0)]
         public long RowTimestamp { get; set; }
-
+        [Key(1)]
         public long ShipId { get; set; }
+        [Key(2)]
         public DateTime ImportTimestamp { get; set; }
+        [Key(3)]
         public Dictionary<ESensor, double> SensorValues { get; set; }
 
 

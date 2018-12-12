@@ -10,7 +10,7 @@ namespace ThesisPrototype
 {
     public abstract class AbstractImportHandler
     {
-        public abstract void Handle(FileStream importFile);
+        public abstract void Handle(FileStream importFile, bool calculateKpis = true);
 
 
         protected readonly static int SENSORVALUES_AMOUNT_PER_IMPORT = 1440;

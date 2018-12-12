@@ -5,6 +5,7 @@ using System.Linq;
 using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Enums;
+using ThesisPrototype.Utilities;
 
 namespace ThesisPrototype.Handlers
 {
@@ -17,15 +18,16 @@ namespace ThesisPrototype.Handlers
             _kpiCalculationHandler = kpiCalculationHandler;
         }
 
-        public override void Handle(FileStream importFile)
+        public override void Handle(FileStream importFile, bool calculateKpis = true)
         {
             string importFileName = importFile.Name.Split('\\').Last();
             long shipIdOfImport = GetShipIdFromFileName(importFileName);
             DateTime dateTimeOfImport = GetImportDateFromFileName(importFileName);
 
-            using (var context = new PrototypeContext())
+
+            if (importFile.Length > 0)
             {
-                if (importFile.Length > 0)
+                using (var context = new PrototypeContext())
                 {
                     using (var stream = new StreamReader(importFile))
                     {
@@ -46,8 +48,15 @@ namespace ThesisPrototype.Handlers
 
                             #region Horrible dictionary to entity assignment code which avoids reflection
 
+                            DateTime timeStampValue = DateTime.Parse(rowAsDict[ESensor.ts]);
+                            long rowTimestamp = timeStampValue.ToUnixMilliTs();
+
                             context.SensorValuesRows.Add(new EfSensorValuesRow()
                             {
+                                ShipId = shipIdOfImport,
+                                RowTimestamp = rowTimestamp,
+                                ImportTimestamp = dateTimeOfImport,
+
                                 sensor1 = double.Parse(rowAsDict[ESensor.sensor1]),
                                 sensor2 = double.Parse(rowAsDict[ESensor.sensor2]),
                                 sensor3 = double.Parse(rowAsDict[ESensor.sensor3]),
@@ -202,16 +211,15 @@ namespace ThesisPrototype.Handlers
                             #endregion
                         }
                     }
-
-                    var dataImportMeta = new DataImportMeta(shipIdOfImport, dateTimeOfImport);
-                    SaveDataImportMeta(dataImportMeta);
-
                     context.SaveChanges();
                 }
-                else
-                {
-                    throw new Exception("Empty import file.");
-                }
+
+                var dataImportMeta = new DataImportMeta(shipIdOfImport, dateTimeOfImport);
+                SaveDataImportMeta(dataImportMeta);
+            }
+            else
+            {
+                throw new Exception("Empty import file.");
             }
         }
     }
