@@ -19,7 +19,6 @@ namespace ThesisPrototype.DatabaseApis
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Do not embed plaintext connection strings in production, pls
             optionsBuilder.UseSqlServer(@"Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=PrototypeDb;");
         }
 

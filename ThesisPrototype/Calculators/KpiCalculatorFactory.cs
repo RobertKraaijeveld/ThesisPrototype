@@ -19,14 +19,13 @@ namespace ThesisPrototype.Calculators
             // Obviously, in a 'real' application, a bit more thought is required to determine which KPI uses which sensor.
             var random = new Random();
 
-            // possible sensors are: all sensors with the exception of the row timestamp
+            // Possible sensors are all sensors with the exception of the row timestamp
             var possibleSensors = Enum.GetValues(typeof(ESensor)).Cast<ESensor>()
                                                                  .Where(s => s.Equals(ESensor.ts) == false)
                                                                  .ToArray();
                                                                  
             var randomSensor = (ESensor) possibleSensors.GetValue(random.Next(possibleSensors.Length));
             var secondRandomSensor = (ESensor) possibleSensors.GetValue(random.Next(possibleSensors.Length));
-
             
             switch (kpi.KpiEnum)
             {

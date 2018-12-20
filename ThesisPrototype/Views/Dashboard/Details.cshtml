@@ -4,12 +4,9 @@
     ViewData["Title"] = "Dashboard";
 }
 @model List<ChartViewModel>
-
-
 @* JS / CSS LIBS WHICH ARE USED ONLY ON THIS PAGE *@
 <script src="~/lib/highcharts/highcharts.js"></script>
 <script src="~/lib/vitalets-datepicker/bootstrap-datepicker.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/es-modules/masters/modules/boost.src.js"></script>
 <link rel="stylesheet" href="~/lib/vitalets-datepicker/datepicker.css" />
 
 
@@ -19,15 +16,15 @@
 </div>
 
 <div class="card mx-auto" style="width: 40rem; margin-bottom: 40px;">
-  <div class="card-header">
-    Chart controls
-  </div>
+    <div class="card-header">
+        Chart controls
+    </div>
 
-  <div class="card-body">
+    <div class="card-body">
         <div class="row">
             <div class="col-xs chartControlInput ">
                 <label for="beginDateInput">From:</label>
-                
+
                 <!-- mm-dd-yyyy because JavaScript does not exactly excell at date parsing, and can only take this format... -->
                 <div class="input-append date" style="margin-bottom: -15px;" id="beginDate" data-date-format="mm-dd-yyyy">
                     <input class="span2" size="16" type="text" id="beginDateInput">
@@ -54,9 +51,9 @@
             </div>
         </div>
 
-        <div class="row" >
+        <div class="row">
             <div id="inputAlert" class="alert alert-danger" style="display: none; margin-top: 20px;" role="alert">
-                <strong>Please enter a valid date.</strong> 
+                <strong>Please enter a valid date.</strong>
             </div>
         </div>
     </div>
@@ -74,7 +71,7 @@
             startDate: '1-1-2000',
             endDate: new Date()
         });
-        
+
         // (re)load chart click handler
         $('#loadInteractiveChartButton').click(function () {
             $('#inputAlert').css({display: "none"});
@@ -96,9 +93,9 @@
                 .done(function (ret) {
                     for(var i = 0; i < ret.length; i++) {
                         var currChartJson = ret[i];
-                        CreateKpiChart(currChartJson.id, 
-                                       'spline', 
-                                       currChartJson.title, 
+                        CreateKpiChart(currChartJson.id,
+                                       'spline',
+                                       currChartJson.title,
                                        currChartJson.series);
                     };
                 });
@@ -111,12 +108,20 @@
 @* KPI CHARTS: DEFAULT VALUES ARE USED AT FIRST *@
 @foreach (var defaultChart in @Model)
 {
+    <hr style="margin-bottom: 80px;" />
     <div id="@defaultChart.Id"></div>
+
+    @if (defaultChart.CreationTimeInMillis > 0)
+    {
+        <h5 style="text-align: center;"><small>Time taken (back-end): @{ @Html.Raw(defaultChart.CreationTimeInMillis / 1000.0); } s.</small></h5>
+        <h5 style="text-align: center;"><small>Average time taken (back-end): @{ @Html.Raw(defaultChart.AverageCreationTimeInMillis / 1000.0); } s.</small></h5>
+    }
+
     <script type="text/javascript">
         CreateKpiChart(@defaultChart.Id,
-                       'spline', 
-                       @Html.Raw(Json.Serialize(@defaultChart.title)), 
-                       @Html.Raw(Json.Serialize(@defaultChart.series)));
+            'spline',
+            @Html.Raw(Json.Serialize(@defaultChart.title)) ,
+            @Html.Raw(Json.Serialize(@defaultChart.series)));
     </script>
 }
 

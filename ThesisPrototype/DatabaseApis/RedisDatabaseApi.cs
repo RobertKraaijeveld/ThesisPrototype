@@ -15,7 +15,7 @@ using ThesisPrototype.Utilities;
 namespace ThesisPrototype.DatabaseApis
 {
     /// <summary>
-    /// A simple API for accessing the Redis KV-store, using the StackExchange Redis driver.
+    /// A simple API exposing CRUD methods to the Redis KV-store, using the StackExchange Redis driver.
     /// </summary>
     public static class RedisDatabaseApi
     {
@@ -54,7 +54,6 @@ namespace ThesisPrototype.DatabaseApis
                     returnValues.Add(deserializedResult);
                 }
             }
-
             return returnValues;
         }
 
@@ -64,7 +63,10 @@ namespace ThesisPrototype.DatabaseApis
 
             foreach (var model in newModels)
             {
-                Task<RedisResult> createModelTask = _databaseConnection.ExecuteAsync("SET", new object[2] { model.ToRedisKey(), MessagePackSerializer.Serialize(model) });
+                string key = model.ToRedisKey();
+                byte[] serializedModel = MessagePackSerializer.Serialize(model);
+
+                Task<RedisResult> createModelTask = _databaseConnection.ExecuteAsync("SET", new object[2] { key, serializedModel });
                 creationTasks.Add(createModelTask);
             }
 
@@ -83,8 +85,8 @@ namespace ThesisPrototype.DatabaseApis
 
             foreach (var key in keys)
             {
-                var deleteStr = $"DEL '{key}'";
-                var cmdAndArgs = SeparateCmdAndArguments(deleteStr);
+                var deleteCmdStr = $"DEL '{key}'";
+                var cmdAndArgs = SeparateCmdAndArguments(deleteCmdStr);
                 
                 // Note that this ExecuteAsync command will only be executed once creationBatch.Execute() is called.
                 var deleteTask = _databaseConnection.ExecuteAsync(cmdAndArgs.Item1, cmdAndArgs.Item2);

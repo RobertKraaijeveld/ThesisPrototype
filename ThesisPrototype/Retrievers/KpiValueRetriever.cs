@@ -26,7 +26,6 @@ namespace ThesisPrototype.Retrievers
                     keys.Add(KpiValueKeyFormatter.GetKey(shipId, kpi, currDate));
                 }
             }
-
             return RedisDatabaseApi.Search<RedisKpiValue>(keys);
         }
     }

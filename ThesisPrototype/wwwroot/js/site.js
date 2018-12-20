@@ -2,7 +2,7 @@ function CreateKpiChart(divId, type, title, series)
 {
     Highcharts.chart(divId, {
         chart: {
-            type: "scatter"
+            type: type
         },
         plotOptions: {
             series: {

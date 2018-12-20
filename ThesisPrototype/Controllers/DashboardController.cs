@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
 using ThesisPrototype.Handlers;
-using ThesisPrototype.Retrievers;
 using ThesisPrototype.Utilities;
 using ThesisPrototype.ViewModels;
 
@@ -53,31 +51,23 @@ namespace ThesisPrototype.Controllers
             {
                 try
                 {
-                    if (context.Ships.Any(x => x.ShipId == shipId) && 
-                        base.CurrentUserIsAllowedAccessToShip(shipId))
-                    {
-                        Ship ship = context.Ships.Single(x => x.ShipId == shipId);
-
-                        long defaultChartRangeBeginTs = DateTime.Today.AddMonths(-2).ToUnixMilliTs();
-                        long defaultChartRangeEndTs = DateTime.Today.ToUnixMilliTs();
-
-                        List<ChartViewModel> defaultCharts = GetCharts(ship.ShipId,
-                                                                        defaultChartRangeBeginTs,
-                                                                        defaultChartRangeEndTs);
-
-                        ViewBag.DefaultChartRangeBeginTs = defaultChartRangeBeginTs;
-                        ViewBag.DefaultChartRangeEndTs = defaultChartRangeEndTs;
-                        ViewBag.ShipName = ship.Name;
-                        ViewBag.ShipImo = ship.ImoNumber;
-                        ViewBag.ShipId = ship.ShipId;
-                        return View(defaultCharts);
-                    }
-                    else
-                    {
-                        return Index();
-                    }
+                    Ship ship = context.Ships.Single(x => x.ShipId == shipId);
+                    
+                    long defaultChartRangeBeginTs = DateTime.Today.AddMonths(-1).ToUnixMilliTs();
+                    long defaultChartRangeEndTs = DateTime.Today.ToUnixMilliTs();
+                    
+                    List<ChartViewModel> defaultCharts = GetCharts(ship.ShipId,
+                                                                     defaultChartRangeBeginTs,
+                                                                     defaultChartRangeEndTs);
+                    
+                    ViewBag.DefaultChartRangeBeginTs = defaultChartRangeBeginTs;
+                    ViewBag.DefaultChartRangeEndTs = defaultChartRangeEndTs;
+                    ViewBag.ShipName = ship.Name;
+                    ViewBag.ShipImo = ship.ImoNumber;
+                    ViewBag.ShipId = ship.ShipId;
+                    return View(defaultCharts);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return Index();
                 }
@@ -119,7 +109,7 @@ namespace ThesisPrototype.Controllers
                     context.SaveChanges();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Something went wrong, please try again.");
             }
@@ -140,7 +130,7 @@ namespace ThesisPrototype.Controllers
                     context.SaveChanges();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Something went wrong, please try again.");
             }

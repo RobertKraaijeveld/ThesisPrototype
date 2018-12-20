@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ThesisPrototype.DatabaseApis;
 using ThesisPrototype.DataModels;
@@ -15,6 +16,18 @@ namespace ThesisPrototype.Handlers
     /// </summary>
     public class ChartRetriever
     {
+        #region Values used for testing EF / Redis performance
+
+        private static List<long> EfChartCreationTimesMillis = new List<long>();
+        private static List<long> RedisChartCreationTimesMillis = new List<long>();
+
+        private static double AverageEfChartCreationTimeMillis = 0;
+        private static double AverageRedisChartCreationTimeMillis = 0;
+
+        #endregion
+
+
+
         private readonly KpiRetriever _kpiRetriever;
         private readonly KpiValueRetriever _kpiValueRetriever;
         private readonly SensorValuesRowRetriever _sensorValuesRowRetriever;
@@ -68,16 +81,43 @@ namespace ThesisPrototype.Handlers
         {
             List<ESensor> sensors = new List<ESensor>() { ESensor.sensor1 };
 
-            return CreateChartViewModel("ef_sensorvalues", "Sensor Values (Retrieved by EF)",
-                                        CreateEntityFrameworkSensorValuesSeries(shipId, sensors, rangeBegin, rangeEnd));
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var chart = CreateChartViewModel("ef_sensorvalues", "Sensor Values (Retrieved by EF)",
+                                             CreateEntityFrameworkSensorValuesSeries(shipId, sensors, rangeBegin, rangeEnd));
+
+            sw.Stop();
+            chart.CreationTimeInMillis = sw.ElapsedMilliseconds;
+
+            // Computing and setting avg creation time
+            EfChartCreationTimesMillis.Add(chart.CreationTimeInMillis);
+            AverageEfChartCreationTimeMillis = EfChartCreationTimesMillis.Average();
+            chart.AverageCreationTimeInMillis = AverageEfChartCreationTimeMillis;
+
+            return chart;
         }
 
         public ChartViewModel GetRedisSensorValuesChart(long shipId, DateTime rangeBegin, DateTime rangeEnd)
         {
             List<ESensor> sensors = new List<ESensor>() { ESensor.sensor1 };
 
-            return CreateChartViewModel("redis_sensorvalues", "Sensor Values (Retrieved by Redis)",
-                                        CreateRedisSensorValuesSeries(shipId, sensors, rangeBegin, rangeEnd));
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var chart = CreateChartViewModel("redis_sensorvalues", "Sensor Values (Retrieved by Redis)",
+                                             CreateRedisSensorValuesSeries(shipId, sensors, rangeBegin, rangeEnd));
+
+            sw.Stop();
+            chart.CreationTimeInMillis = sw.ElapsedMilliseconds;
+
+            // Computing and setting avg creation time
+            RedisChartCreationTimesMillis.Add(chart.CreationTimeInMillis);
+            AverageRedisChartCreationTimeMillis = RedisChartCreationTimesMillis.Average();
+            chart.AverageCreationTimeInMillis = AverageRedisChartCreationTimeMillis;
+
+            return chart;
         }
 
 

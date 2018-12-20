@@ -3,6 +3,8 @@
     public class ChartViewModel
     {
         public string Id;
+        public long CreationTimeInMillis;
+        public double AverageCreationTimeInMillis;
         public ChartTitleViewModel title;
         public ChartSerieViewModel[] series;
     }

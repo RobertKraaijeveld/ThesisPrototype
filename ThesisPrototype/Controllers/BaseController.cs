@@ -40,10 +40,5 @@ namespace ThesisPrototype.Controllers
                 return context.Ships.Where(s => s.UserId == currentUser.UserId).ToList();
             }
         }
-
-        protected bool CurrentUserIsAllowedAccessToShip(long shipId)
-        {
-            return GetShipsEntitiesOfCurrentUser().Any(s => s.ShipId == shipId);
-        }
     }
 }
