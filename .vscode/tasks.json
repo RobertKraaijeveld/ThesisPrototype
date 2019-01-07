@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ImportFileCreator/ImportFileCreator.csproj"
+                "${workspaceFolder}/ThesisPrototype.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
