@@ -17,11 +17,12 @@ Steps for running this application
 -----------------------------------------
 0. > git clone https://github.com/robertkraaijeveld/thesisprototype
 1. > cd ImportFileCreator/
-2. > git clone https://github.com/robertkraaijeveld/ImportFileCreator
-3. > ./ThesisPrototype/Scripts/start-redis.sh create
-4. Edit the value of "RedisConnectionString" in appsettings.json to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
-5. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
-6. > dotnet restore
-7. > dotnet ef database update
-8. > dotnet run
-9. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
+2. > ./ThesisPrototype/Scripts/start-redis.sh create
+3. Edit the value of "RedisConnectionString" in appsettings.json to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
+4. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
+5. > dotnet restore
+6. > dotnet ef database update
+7. > dotnet run
+8. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
+
+You can use the ImportFileCreator project at https://github.com/robertkraaijeveld/ImportFileCreator to generate fake import files that this prototype can import. 
