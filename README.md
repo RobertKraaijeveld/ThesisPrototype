@@ -15,11 +15,13 @@ Pre-requisites
 
 Steps for running this application
 -----------------------------------------
-0. > git clone --recurse-submodules https://github.com/robertkraaijeveld/thesisprototype
-1. > ./ThesisPrototype/Scripts/start-redis.sh create
-2. Edit the value of "RedisConnectionString" in appsettings.json to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
-3. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
-4. > dotnet restore
-5. > dotnet ef database update
-6. > dotnet run
-7. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
+0. > git clone https://github.com/robertkraaijeveld/thesisprototype
+1. > cd ImportFileCreator/
+2. > git clone https://github.com/robertkraaijeveld/ImportFileCreator
+3. > ./ThesisPrototype/Scripts/start-redis.sh create
+4. Edit the value of "RedisConnectionString" in appsettings.json to "&lt;ip of the redis-manager0 docker-machine&gt;:7000"
+5. Create a new database in the SQL Server LocalDB using > CREATE DATABASE PrototypeDb;
+6. > dotnet restore
+7. > dotnet ef database update
+8. > dotnet run
+9. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
