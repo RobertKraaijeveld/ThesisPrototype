@@ -24,3 +24,5 @@ Steps for running this application
 7. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
 
 You can use the ImportFileCreator project at https://github.com/robertkraaijeveld/ImportFileCreator to generate fake import files that this prototype can import. 
+
+Note that the prototype will use both the Entity Framework and Redis to import files. You can look at the values of the static measurement variables in the ImportController to see how long both of these systems take on average to do the same amount of work.
