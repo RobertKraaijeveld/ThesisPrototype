@@ -22,4 +22,4 @@ Steps for running this application
 4. > dotnet restore
 5. > dotnet ef database update
 6. > dotnet run
-7. Log in: default available users are User1, User2 or User3, with password 'password'.
+7. Log in: default available users are User1, User2 or User3, with password 'password'. User2  already has some ships (without data).
