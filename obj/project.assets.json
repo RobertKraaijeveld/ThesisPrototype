@@ -9758,7 +9758,7 @@
       ]
     },
     "System.Buffers/4.5.0": {
-      "sha512": "xpHYjjtyTEpzMwtSQBWdVc3dPjLdQtvyUg6fBlBqcLl1r2Y7gDG/W/enAYOB98nG3oD3Q153Y2FBO8JDWd+0Xw==",
+      "sha512": "pL2ChpaRRWI/p4LXyy4RgeWlYF2sgfj/pnVMvBqwNFr5cXg7CXNnWZWxrOONLg8VGdFB8oB+EG2Qw4MLgTOe+A==",
       "type": "package",
       "path": "system.buffers/4.5.0",
       "files": [
@@ -14688,11 +14688,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\ThesisPrototype.csproj",
+      "projectUniqueName": "C:\\Projects\\Temp\\ThesisPrototype\\ThesisPrototype.csproj",
       "projectName": "ThesisPrototype",
-      "projectPath": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\ThesisPrototype.csproj",
+      "projectPath": "C:\\Projects\\Temp\\ThesisPrototype\\ThesisPrototype.csproj",
       "packagesPath": "C:\\Users\\kraaijeveld\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\Afstudeerprototype\\ThesisPrototype\\ThesisPrototype\\obj\\",
+      "outputPath": "C:\\Projects\\Temp\\ThesisPrototype\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
